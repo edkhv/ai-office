@@ -223,7 +223,7 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
             "provider_status": provider.health(),
             "checks": checks(),
             "hardware": {
-                "target": "Orange Pi AI Studio Pro 96 GB",
+                "target": "Local AI Station 96–128 GB",
                 "status": "hardware_validation_pending",
                 "implementation": "partial",
                 "validation": "not_run",

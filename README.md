@@ -1,6 +1,6 @@
 # AI Office
 
-AI Office is an early-stage, local-first business assistant platform for small and medium-sized companies. This repository contains a runnable software prototype. **Orange Pi AI Studio Pro 96 GB is a proposed evaluation target; device-level integration has not yet been validated.**
+AI Office is an early-stage, local-first business assistant platform for small and medium-sized companies. This repository contains a runnable software prototype. **Local AI Station 96–128 GB is a proposed evaluation target; device-level integration has not yet been validated.** The manufacturer is selected for the workload. Application development continues on an available computer; the target station is needed for device-level performance and delivery validation.
 
 [Русская версия](README.ru.md) · [Demo walkthrough](docs/DEMO_WALKTHROUGH.md) · [Validation](docs/VALIDATION.md) · [Partner overview](docs/PARTNER_OVERVIEW.md)
 
@@ -36,7 +36,7 @@ docker compose up -d --build --wait --wait-timeout 180
 docker compose exec app python -m app.cli credential owner
 ```
 
-Initial setup downloads packages/images. After preparation, demo requires no paid API, GPU, Ollama, Orange Pi or remote assets. Only the application is published to loopback; Qdrant and SQLite are not exposed. [Operations and credentials](docs/OPERATIONS.md).
+Initial setup downloads packages/images. After preparation, demo requires no paid API, GPU, Ollama, Local AI Station or remote assets. Only the application is published to loopback; Qdrant and SQLite are not exposed. [Operations and credentials](docs/OPERATIONS.md).
 
 ## Architecture and models
 
@@ -66,6 +66,6 @@ The dependency audit still reports four advisories in transitive ChromaDB, which
 
 No supplier email is sent. External business connectors, Office Manager, DOCX/PDF/OCR, meetings, Investor Room, scheduled delivery, encrypted backup and the remaining workforce modules are **planned**, not implemented. [Roadmap](docs/ROADMAP.md) · [Threat model](docs/THREAT_MODEL.md) · [Continuity design](docs/continuity/RUNBOOK.md).
 
-For Orange Pi: [partner discussion brief](docs/PARTNER_OVERVIEW.md), [hardware validation gates](docs/hardware/ORANGE_PI_VALIDATION.md), architecture, walkthrough and [actual screenshots](docs/assets). No purchase, partnership, driver installation, Ascend compatibility, throughput or customer deployment is claimed.
+For hardware suppliers and integrators: [partner discussion brief](docs/PARTNER_OVERVIEW.md), [hardware validation gates](docs/hardware/LOCAL_AI_STATION_VALIDATION.md), architecture, walkthrough and [actual screenshots](docs/assets). No purchase, partnership, driver installation, device compatibility, throughput or customer deployment is claimed.
 
 Distribution licensing is awaiting the owner's decision. Public visibility does not make this an open-source-licensed release. [LICENSING.md](LICENSING.md).

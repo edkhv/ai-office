@@ -13,7 +13,7 @@ All entries below are **implementation=planned, validation=not_run**. Written co
 | Reminders | Due task + work-hour policy → proposed/local reminder | Scheduling, deduplication, quiet hours, opt-out and delivery evidence |
 | One read-only connector | Scoped credential + cursor → typed SourceSnapshot | Real integration test, source timestamp, availability and freshness; no write scopes |
 | Encrypted backup/restore | Consistent DB/source manifest → encrypted off-site archive → isolated restore | Reviewed tool, separate keys, repeated restore drill and measured RPO/RTO |
-| Orange Pi pilot | Vendor-supported hardware/runtime/model → the same provider contract | Gate-by-gate physical validation and measured workload; no device claim until passed |
+| Local AI Station pilot | Vendor-supported hardware/runtime/model → the same provider contract | Gate-by-gate physical validation and measured workload; no device claim until passed |
 | Database scaling | Validated PostgreSQL schema + worker leases | Migration/concurrency/load tests; SQLite behavior preserved |
 
 ## P2 — product directions retained
@@ -30,7 +30,7 @@ All entries below are **implementation=planned, validation=not_run**. Written co
 | Code assessment | Candidate-authorized artifacts → isolated assessment report | Voluntary participation, sandboxed execution, no unrestricted host access |
 | MCP / A2A | Capability manifest + scoped tool contract → bounded request/result | Authentication, policy, timeout, audit and protocol integration tests |
 | Marketing | Approved business facts + brief → campaign/copy proposals | Claims substantiated, review before publication |
-| Design | Brand brief + permitted assets → design candidate through image provider | Separate licensing/approval path; no unsupported Orange Pi speed claim |
+| Design | Brand brief + permitted assets → design candidate through image provider | Separate licensing/approval path; no unsupported Local AI Station speed claim |
 | Calls / voice | Authorized recording → transcript and verified working summary | Consent, retention rules; no covert monitoring or identity recognition |
 | Programming | Allowed repository/task → reviewable changes | Isolated workspace, tests, human controls; business agent has no shell |
 | Production / vision | Authorized images/docs → bounded observations | Separate hardware/data pilot, error analysis and quality gates |
@@ -41,6 +41,6 @@ All entries below are **implementation=planned, validation=not_run**. Written co
 
 Industry packs: construction, service businesses, retail, manufacturing, logistics and clinic administration. Each requires a scoped data model, fixtures and real-world acceptance tests before any deployment claim.
 
-Portable deployment candidate: management laptop with SSD and battery, independently validated Orange Pi inference node, separate 4G/5G router, primary internet and UPS. Maintain encrypted off-site copies and separately stored recovery keys. Redundant connectivity does not guarantee service in every outage. See continuity/RUNBOOK.md.
+Portable deployment candidate: a validated Local AI Station with 96–128 GB memory and SSD, optional separate management computer, separate 4G/5G router, primary internet and UPS. Maintain encrypted off-site copies and separately stored recovery keys. Redundant connectivity does not guarantee service in every outage. See continuity/RUNBOOK.md.
 
 Next engineering priority: a repeated, human-labeled local-model evidence/abstention suite plus resolution or isolation of the remaining ChromaDB advisories before using real company data; then choose one read-only connector with an explicit source contract.

@@ -1,6 +1,6 @@
 # Validation evidence — 2026-09-05
 
-Environment: Python 3.11.15 on macOS ARM64; Docker Engine 29.7.2 running a Linux ARM64 VM; Qdrant v1.16.2. These results do not validate Orange Pi, Ascend or arbitrary platform combinations. This report distinguishes software behavior from model quality.
+Environment: Python 3.11.15 on macOS ARM64; Docker Engine 29.7.2 running a Linux ARM64 VM; Qdrant v1.16.2. These results do not validate the proposed Local AI Station or arbitrary platform combinations. This report distinguishes software behavior from model quality.
 
 | Check actually run | Result | Scope |
 |---|---|---|

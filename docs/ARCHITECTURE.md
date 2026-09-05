@@ -20,7 +20,7 @@ flowchart TD
     RAG --> FILES[Immutable local source files]
     AUTH --> METRIC[Decimal calculations + row lineage]
     METRIC --> DB
-    LOCAL -. future validated runtime .-> HW[Orange Pi evaluation target]
+    LOCAL -. future validated runtime .-> HW[Local AI Station evaluation target]
 ```
 
 Demo replaces model generation and embeddings only. SQL, jobs, approval transitions, document files, Qdrant, metrics, authorization and the UI remain real. Model generation is lazy and never starts on module import.

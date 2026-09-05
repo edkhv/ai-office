@@ -74,5 +74,15 @@
     "limitations": [
       "P1/P2; not implemented"
     ]
+  },
+  {
+    "module": "Local AI Station 96–128 GB",
+    "implementation": "partial",
+    "validation": "not_run",
+    "mode": "target_only",
+    "test_refs": [],
+    "limitations": [
+      "Vendor and runtime not selected; physical hardware validation pending; development does not require this station"
+    ]
   }
 ]

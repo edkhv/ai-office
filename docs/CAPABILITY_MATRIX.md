@@ -10,6 +10,6 @@ Implementation and validation are independent. Runtime mode and health are separ
 | Ollama + CrewAI | implemented | local_llm | local_ollama | tests/unit/test_providers.py, scripts/local_llm.py | Single installed-model planner/reviewer and embeddings check; repeated quality evaluation pending |
 | Compatible HTTP | implemented | unit | compatible_http | tests/unit/test_providers.py | Runtime contract must be explicitly verified; no device claim |
 | Investor Room, Office Manager, connectors | planned | not_run | roadmap | — | P1/P2; not implemented |
-| Orange Pi target profile | partial | not_run | target only | hardware/ORANGE_PI_VALIDATION.md | Device not available; transport/runtime not configured |
+| Local AI Station 96–128 GB | partial | not_run | target_only | hardware/LOCAL_AI_STATION_VALIDATION.md | Vendor/runtime not selected; physical validation pending; development continues on an available computer |
 
 Synthetic data is used throughout. API/UI read app/capabilities.json; this document mirrors that registry. On-device status requires physical evidence. See VALIDATION.md for exact commands and scope.

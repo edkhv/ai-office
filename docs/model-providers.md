@@ -2,7 +2,7 @@
 
 Demo: `engine=deterministic_demo`, model_id=null, hash/lexical embeddings. Only the procurement example is supported; unspecified assignment fields or unsupported requests ask for clarification. Knowledge answers in demo are extractive snippets. This validates plumbing and policy, not model intelligence or semantic retrieval quality.
 
-Ollama: set `AI_OFFICE_MODE=local_ollama`, `AI_OFFICE_EMBEDDING_PROVIDER=ollama`. Model and embedding identifiers are configurable; default examples are `qwen3:8b` and `mxbai-embed-large`. These are suggestions for development, not Orange Pi compatibility guarantees. No weights are downloaded by bootstrap.
+Ollama: set `AI_OFFICE_MODE=local_ollama`, `AI_OFFICE_EMBEDDING_PROVIDER=ollama`. Model and embedding identifiers are configurable; default examples are `qwen3:8b` and `mxbai-embed-large`. These are suggestions for development, not Local AI Station compatibility guarantees. No weights are downloaded by bootstrap.
 
 Install Ollama and obtain the desired models separately through its documented distribution. Verify them with `ollama list`. Stop the demo before using the same port for the separate local profile:
 

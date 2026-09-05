@@ -1,0 +1,11 @@
+profile_version: 1
+target: Local AI Station 96–128 GB
+vendor: not_selected
+memory_capacity_gb_range: [96, 128]
+deployment_topology: to_be_validated
+status: hardware_validation_pending
+device_validation: not_run
+transport: not_configured
+runtime: not_configured
+compatible_http_contract_verified: false
+validation_plan: docs/hardware/LOCAL_AI_STATION_VALIDATION.md
