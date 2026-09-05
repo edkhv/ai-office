@@ -25,6 +25,7 @@ from app.services import seed
 
 
 def main():
+    Path(".runtime").mkdir(exist_ok=True, mode=0o700)
     report = {
         "timestamp": datetime.now(UTC).isoformat(),
         "git_sha": subprocess.run(

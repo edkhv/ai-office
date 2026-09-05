@@ -23,7 +23,7 @@ Secret scan: Gitleaks 8.30.1 scanned the final staged publication tree with zero
 
 ## Publication
 
-Local main branch exists. GitHub publication and remote CI are pending final source review. No release/tag or CI success is claimed yet.
+Published public repository: https://github.com/edkhv/ai-office, branch main. Initial publication commit: 11ba562. The first remote demo job passed a clean Linux x86_64 build, HTTP smoke, restart and repeat smoke. The quality job exposed a missing ignored .runtime parent for pytest basetemp in a clean checkout; test/bootstrap commands now create it explicitly. Full remote CI is being repeated. No release/tag or overall CI success is claimed yet.
 
 ## Honest limits
 

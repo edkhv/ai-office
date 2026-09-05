@@ -8,6 +8,7 @@ from smoke import BASE, demo_token
 
 
 def main():
+    Path(".runtime").mkdir(exist_ok=True, mode=0o700)
     out = Path("docs/assets")
     out.mkdir(parents=True, exist_ok=True)
     external = []

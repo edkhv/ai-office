@@ -1,5 +1,6 @@
 import socket
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -11,6 +12,11 @@ from app.db import engine_for, heartbeat, migrate
 from app.knowledge import Knowledge
 from app.main import create_app
 from app.services import seed
+
+
+def pytest_configure(config):
+    # pytest creates basetemp itself, but its ignored parent is absent in a clean checkout.
+    (Path(config.rootpath) / ".runtime").mkdir(exist_ok=True, mode=0o700)
 
 
 class Clock:
