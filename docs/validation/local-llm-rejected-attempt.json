@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-09-05T10:07:19.013404+00:00",
+  "mode": "local_ollama",
+  "model": "mistral:latest",
+  "embedding_model": "qwen3-embedding:latest",
+  "hardware": "not_run",
+  "tokens": null,
+  "cost": null,
+  "sample_count": 1,
+  "passed": 0,
+  "failed": 1,
+  "error_type": "DomainError",
+  "error_code": "REVIEW_REJECTED",
+  "latency_seconds": 48.642,
+  "connection_hosts": [
+    "127.0.0.1"
+  ]
+}

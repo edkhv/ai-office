@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-09-05T10:28:59.802385+00:00",
+  "command": "uv run pip-audit --local --skip-editable --format json",
+  "findings": [
+    {
+      "package": "chromadb",
+      "version": "1.1.1",
+      "advisories": [
+        {
+          "id": "PYSEC-2026-311",
+          "fix_versions": []
+        },
+        {
+          "id": "GHSA-2wm9-hf6c-p5cr",
+          "fix_versions": []
+        },
+        {
+          "id": "GHSA-36p7-vc44-83pf",
+          "fix_versions": []
+        },
+        {
+          "id": "GHSA-xph7-9rjv-w5fr",
+          "fix_versions": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+# Demonstration walkthrough (5–7 minutes)
+
+1. Run `make demo`, then privately obtain a token with `make credential`. Open http://127.0.0.1:8090 and sign in. Point to “Synthetic demo data”, deterministic_demo and the alpha version. EN is default; RU switches the main screens and statuses.
+2. Open Chief of Staff. The prepared Russian instruction requests three steel offers for North by 11 September 2026 at 15:00 Moscow. Confirm the Procurement team and deadline fields. Prepare plan. Show the persistent workflow/job IDs, original instruction, three proposed tasks, draft supplier message, payload hash/version and expiry.
+3. Before approval, show that no tasks from this workflow exist. Approve, then open Tasks: three actual SQL records appear. Change one to In progress and save a synthetic result. Reopening/restarting preserves state; repeating approval does not repeat execution.
+4. Open Knowledge, ask “Какой лимит самостоятельного согласования закупок?”. The demo returns literal permitted source fragments. Open the source: 100,000 RUB, version, source date and current status. Explain that this is hash/lexical retrieval, not an LLM quality result. Upload a small .md/.txt to demonstrate genuine indexing. Same filename updates its version.
+5. Open Business Control. Show forecast margin 20%. Click Why? and inspect formula plus north-contract (1,800,000) and north-costs (1,440,000). Contract value is not received revenue. Every financial card comes from the API; the fixture snapshot date and freshness warning remain visible.
+6. Open Activity: proposed, approved, attempted and succeeded records. Open System: mode/provider/worker/Qdrant and separate implementation/validation labels. Orange Pi reads “Target hardware; not yet validated on device.” External sending, Investor Room and production backup remain planned.
+7. Optional scoped login: issue `make credential ROLE=employee`, sign out and sign in. Employee sees their team tasks and permitted documents, but cannot read management metrics, another user's workflow or owner-only document IDs.
+
+`make smoke` exercises the server sequence; `make screenshots` exercises the UI and saves actual screenshots under docs/assets. No generated mockups are used. Preparation may require network for packages/images; the already prepared demo needs no paid API, GPU, Ollama or Orange Pi.

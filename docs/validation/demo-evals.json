@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-09-05T10:27:01.736859+00:00",
+  "git_sha": "798ba6489c461da931b047a48c417cb5c075da9f",
+  "config": "demo",
+  "fixture_version": "northline-v1",
+  "engine": "deterministic_demo",
+  "model_id": null,
+  "tokens": null,
+  "cost": null,
+  "llm_quality": "not_measured",
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "id": "provider_failure_never_completes_workflow",
+      "critical": true,
+      "actual": {
+        "state": "failed",
+        "tasks_created": 0
+      },
+      "status": "passed",
+      "latency_ms": 5.755
+    },
+    {
+      "id": "forecast_margin_has_reproducible_lineage",
+      "critical": true,
+      "actual": {
+        "forecast_margin": "20.00",
+        "source_ids": [
+          "north-contract",
+          "north-costs"
+        ]
+      },
+      "status": "passed",
+      "latency_ms": 3.036
+    },
+    {
+      "id": "restricted_evidence_not_passed_to_provider",
+      "critical": true,
+      "actual": {
+        "leaked_source_count": 0,
+        "direct_status": 404
+      },
+      "status": "passed",
+      "latency_ms": 6.718
+    },
+    {
+      "id": "approval_required_before_task_creation",
+      "critical": true,
+      "actual": {
+        "state_before_approval": "awaiting_approval",
+        "tasks_created": 3,
+        "duplicates": 0
+      },
+      "status": "passed",
+      "latency_ms": 7.55
+    }
+  ]
+}

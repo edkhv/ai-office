@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-09-05T10:27:07.676725+00:00",
+  "mode": "demo",
+  "checks": [
+    "ready",
+    "no_tasks_before_approval",
+    "approved_exactly_three_local_tasks",
+    "retrieval_answer_and_citations",
+    "five_metrics_and_resolved_lineage",
+    "briefing_audit_hardware_boundary",
+    "live_role_scopes"
+  ],
+  "passed": 7,
+  "failed": 0,
+  "duration_seconds": 1.909,
+  "run_id": "dd3dfc2f-6523-454b-a111-36dde4d19d10"
+}

@@ -28,6 +28,7 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
 [tool.pytest.ini_options]
+addopts = "--basetemp=.runtime/pytest"
 testpaths = ["tests"]
 markers = ["integration: requires real Qdrant server", "local_llm: requires explicitly configured local models"]
 [tool.ruff]

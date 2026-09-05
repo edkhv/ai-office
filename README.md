@@ -1,0 +1,71 @@
+# AI Office
+
+AI Office is an early-stage, local-first business assistant platform for small and medium-sized companies. This repository contains a runnable software prototype. **Orange Pi AI Studio Pro 96 GB is a proposed evaluation target; device-level integration has not yet been validated.**
+
+[Русская версия](README.ru.md) · [Demo walkthrough](docs/DEMO_WALKTHROUGH.md) · [Validation](docs/VALIDATION.md) · [Partner overview](docs/PARTNER_OVERVIEW.md)
+
+![Actual AI Office demo dashboard](docs/assets/today.png)
+
+## What works
+
+- **Chief of Staff:** instruction → typed plan → approval of an exact version/hash → real local tasks. Durable jobs survive restarts; repeated approvals do not duplicate local writes.
+- **Knowledge:** Markdown/TXT ingestion, immutable versions, Qdrant retrieval filtered by current permissions, answers with source/version links and revocation checks.
+- **Business Control:** five synthetic financial examples calculated with Decimal. “Why?” opens the formula and actual input records. Forecast profit and margin are explicitly forecasts.
+- **Control:** owner/manager/employee scopes, local credentials, protected sessions, audit, on-demand briefing, English/Russian dashboard and visible dependency/hardware status.
+- **Providers:** deterministic demo, actual CrewAI Planner/Reviewer over Ollama, separately configurable Ollama embeddings, and a tested compatible HTTP contract.
+
+Demo SQL, worker, Qdrant, file storage, task updates and calculations are real. Model responses are **deterministic fixtures**, and embeddings are labeled lexical/hash-based. Demo supports the supplied procurement example; unsupported instructions or missing team/deadline fields ask for clarification. The company and all business records are synthetic even in the real-model profile.
+
+## Run the demo
+
+Prerequisite: Docker with Compose v2; Make is convenient on macOS/Linux.
+
+```bash
+git clone https://github.com/edkhv/ai-office.git
+cd ai-office
+make demo
+make credential
+```
+
+Open **http://127.0.0.1:8090** and enter the generated token. Keep token output private. It is not a shared/default password. `make credential ROLE=employee` creates a scoped employee login. `make down` stops containers while keeping data.
+
+Without Make on Windows:
+
+```powershell
+docker compose up -d --build --wait --wait-timeout 180
+docker compose exec app python -m app.cli credential owner
+```
+
+Initial setup downloads packages/images. After preparation, demo requires no paid API, GPU, Ollama, Orange Pi or remote assets. Only the application is published to loopback; Qdrant and SQLite are not exposed. [Operations and credentials](docs/OPERATIONS.md).
+
+## Architecture and models
+
+Python 3.11 · FastAPI/Pydantic · SQLAlchemy/Alembic/SQLite WAL · CrewAI · Ollama · LangChain/Qdrant · Jinja2 + local JavaScript/CSS · Docker Compose · pytest.
+
+One API and one separate worker share the application image. Models propose data; SQL controls authorization, durable approval and local execution. Generation and embeddings are selected independently. A provider failure is visible; there is no implicit cloud or demo fallback. [Architecture](docs/ARCHITECTURE.md) · [Model configuration](docs/model-providers.md).
+
+The project continues [AI Docs Assistant](https://github.com/edkhv/ai-docs-assistant) at `d24f1e9`; the original repository was not modified. [Baseline review and dependency changes](docs/BASELINE_REVIEW.md).
+
+## Verification
+
+```bash
+uv sync --frozen --python 3.11
+make lint
+make test
+make integration-test
+make eval-demo
+make smoke        # running demo required
+make screenshots  # real browser walkthrough
+```
+
+The validated results and limitations are in [VALIDATION.md](docs/VALIDATION.md) and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md). Capability implementation and validation are separate; local model tests do not validate hardware. [Capability matrix](docs/CAPABILITY_MATRIX.md).
+
+The dependency audit still reports four advisories in transitive ChromaDB, which CrewAI pins and this application does not use as storage. See [dependency review](docs/DEPENDENCY_REVIEW.md). This is not a production security claim.
+
+## Boundaries and next steps
+
+No supplier email is sent. External business connectors, Office Manager, DOCX/PDF/OCR, meetings, Investor Room, scheduled delivery, encrypted backup and the remaining workforce modules are **planned**, not implemented. [Roadmap](docs/ROADMAP.md) · [Threat model](docs/THREAT_MODEL.md) · [Continuity design](docs/continuity/RUNBOOK.md).
+
+For Orange Pi: [partner discussion brief](docs/PARTNER_OVERVIEW.md), [hardware validation gates](docs/hardware/ORANGE_PI_VALIDATION.md), architecture, walkthrough and [actual screenshots](docs/assets). No purchase, partnership, driver installation, Ascend compatibility, throughput or customer deployment is claimed.
+
+Distribution licensing is awaiting the owner's decision. Public visibility does not make this an open-source-licensed release. [LICENSING.md](LICENSING.md).

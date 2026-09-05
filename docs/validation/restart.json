@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-09-05T10:27:05.643351+00:00",
+  "restart": "app and worker",
+  "task_rows_preserved": 6,
+  "duplicates": 0,
+  "status": "passed"
+}
