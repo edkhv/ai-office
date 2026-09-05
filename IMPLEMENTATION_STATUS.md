@@ -23,7 +23,9 @@ Secret scan: Gitleaks 8.30.1 scanned the final staged publication tree with zero
 
 ## Publication
 
-Published public repository: https://github.com/edkhv/ai-office, branch main. Initial publication commit: 11ba562. The first remote demo job passed a clean Linux x86_64 build, HTTP smoke, restart and repeat smoke. The quality job exposed a missing ignored .runtime parent for pytest basetemp in a clean checkout; test/bootstrap commands now create it explicitly. Full remote CI is being repeated. No release/tag or overall CI success is claimed yet.
+Public repository: https://github.com/edkhv/ai-office, branch main. Software commit `a9166bdd3fc5a3af804841a088c30f1663bf3292` passed both remote quality and demo jobs: https://github.com/edkhv/ai-office/actions/runs/33960962345. This includes a clean Linux x86_64 frozen install, lint/type checks, 84 unit/security tests, 3 real-Qdrant integration tests, 4 demo evals, package build, publication gate, Gitleaks and Compose demo/smoke/restart/repeat smoke.
+
+The initial quality run failed because pytest's ignored .runtime parent did not exist in a clean checkout. Explicit bootstrap creation fixed it; an independent fresh-directory local run and the repeated remote CI passed. The original failed run remains visible in GitHub history. Subsequent documentation commits record this evidence; they do not change business code. Release identifier: `v0.1.0-alpha`; no production-readiness or clean dependency-audit claim.
 
 ## Honest limits
 

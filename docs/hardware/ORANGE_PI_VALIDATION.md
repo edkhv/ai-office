@@ -2,7 +2,7 @@
 
 Status: **Target hardware; not yet validated on device.** Target from owner brief: Orange Pi AI Studio Pro, 96 GB configuration. This is not an assertion about how that memory is exposed to software.
 
-No device was attached or tested. No drivers, firmware, CANN, MindIE, vLLM-Ascend or torch_npu were installed by this project. The software image was tested on a Docker Linux ARM64 VM on an Apple Silicon development host; this does not establish Orange Pi hardware compatibility or a tested multi-architecture distribution.
+No device was attached or tested. No drivers, firmware, CANN, MindIE, vLLM-Ascend or torch_npu were installed by this project. The software image was tested on a Docker Linux ARM64 VM on an Apple Silicon development host and on Linux x86_64 in GitHub Actions. These are independently built images, not a published multi-architecture image distribution or proof of Orange Pi compatibility.
 
 | Gate | Required evidence / question | Current result |
 |---|---|---|

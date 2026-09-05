@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "conclusion": "success",
+  "headSha": "a9166bdd3fc5a3af804841a088c30f1663bf3292",
+  "url": "https://github.com/edkhv/ai-office/actions/runs/33960962345",
+  "jobs": [
+    {
+      "name": "demo",
+      "status": "completed",
+      "conclusion": "success",
+      "completedAt": "2026-09-05T10:34:59Z"
+    },
+    {
+      "name": "quality",
+      "status": "completed",
+      "conclusion": "success",
+      "completedAt": "2026-09-05T10:34:01Z"
+    }
+  ]
+}

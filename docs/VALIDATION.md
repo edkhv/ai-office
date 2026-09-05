@@ -25,4 +25,4 @@ Unit tests cover concurrent/repeated approval, revised/expired/foreign approval,
 
 Known test warnings: upstream Starlette/AnyIO and CrewAI deprecation warnings. They are not suppressed as passes. No independent LLM judge, repeated grounded-answer evaluation, load benchmark, multi-tenant test, hardware benchmark, encrypted restore drill or production security audit was performed.
 
-Public-source secret scan and remote CI/publication outcomes are recorded in IMPLEMENTATION_STATUS.md once completed. Do not infer remote CI from local tests. Screenshots are generated from the running UI; they are not rendered design mockups.
+Gitleaks 8.30.1 reported zero findings in the final staged publication tree and in remote CI. GitHub Actions quality and demo jobs passed on software commit `a9166bdd3fc5a3af804841a088c30f1663bf3292`: https://github.com/edkhv/ai-office/actions/runs/33960962345. The Linux x86_64 runner used Python 3.11.16; Docker uses pinned Python 3.11.15. The earlier clean-checkout failure was test-directory initialization and was fixed without skipping tests. Screenshots are generated from the running UI; they are not rendered design mockups.
