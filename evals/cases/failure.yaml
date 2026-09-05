@@ -1,0 +1,8 @@
+id: provider_failure_never_completes_workflow
+suite: failure_handling
+mode: demo
+input_fixture: examples/requests/procurement.json
+expected:
+  state: failed
+  tasks_created: 0
+critical: true

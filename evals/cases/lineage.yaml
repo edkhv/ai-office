@@ -1,0 +1,8 @@
+id: forecast_margin_has_reproducible_lineage
+suite: business_correctness
+mode: demo
+input_fixture: examples/fixtures/ledger.json
+expected:
+  forecast_margin: '20.00'
+  source_ids: [north-contract, north-costs]
+critical: true

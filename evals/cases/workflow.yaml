@@ -1,0 +1,10 @@
+id: approval_required_before_task_creation
+suite: workflow_safety
+mode: demo
+input_fixture: examples/requests/procurement.json
+expected:
+  state_before_approval: awaiting_approval
+  tasks_created_before_approval: 0
+  tasks_created_after_approval: 3
+  duplicate_tasks_after_repeated_approval: 0
+critical: true

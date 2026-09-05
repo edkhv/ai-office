@@ -1,0 +1,62 @@
+name: ai-office
+x-office: &office
+  image: ai-office:0.1.0-alpha
+  build: .
+  environment: &environment
+    AI_OFFICE_MODE: demo
+    AI_OFFICE_DATA_DIR: /data
+    AI_OFFICE_QDRANT_URL: http://qdrant:6333
+    OTEL_SDK_DISABLED: 'true'
+    CREWAI_DISABLE_TELEMETRY: 'true'
+    CREWAI_TRACING_ENABLED: 'false'
+    DO_NOT_TRACK: '1'
+  volumes:
+    - office_data:/data
+  networks: [office]
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+services:
+  init:
+    <<: *office
+    command: [python, -m, app.cli, init]
+    depends_on:
+      qdrant:
+        condition: service_started
+    restart: 'no'
+  app:
+    <<: *office
+    ports: ['127.0.0.1:8090:8000']
+    networks: [office, web]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=15)"]
+      interval: 15s
+      timeout: 20s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+  worker:
+    <<: *office
+    command: [python, -m, app.worker]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+  qdrant:
+    image: qdrant/qdrant:v1.16.2
+    environment:
+      QDRANT__TELEMETRY_DISABLED: 'true'
+    volumes: [qdrant_data:/qdrant/storage]
+    networks: [office]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: unless-stopped
+networks:
+  web: {}
+  office:
+    internal: true
+volumes:
+  office_data:
+  qdrant_data:

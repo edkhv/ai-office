@@ -1,0 +1,8 @@
+profile_version: 1
+target: Orange Pi AI Studio Pro 96 GB
+status: hardware_validation_pending
+device_validation: not_run
+transport: not_configured
+runtime: not_configured
+compatible_http_contract_verified: false
+validation_plan: docs/hardware/ORANGE_PI_VALIDATION.md

@@ -1,0 +1,8 @@
+id: restricted_evidence_not_passed_to_provider
+suite: evidence_safety
+mode: demo
+input_fixture: examples/fixtures/documents/restricted.txt
+expected:
+  leaked_source_count: 0
+  direct_source_http_status: 404
+critical: true

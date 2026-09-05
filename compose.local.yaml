@@ -1,0 +1,19 @@
+x-local: &local
+  AI_OFFICE_MODE: local_ollama
+  AI_OFFICE_EMBEDDING_PROVIDER: ollama
+  AI_OFFICE_OLLAMA_BASE_URL: http://host.docker.internal:11434
+  AI_OFFICE_OLLAMA_MODEL: ${AI_OFFICE_OLLAMA_MODEL:-qwen3:8b}
+  AI_OFFICE_OLLAMA_EMBEDDING_MODEL: ${AI_OFFICE_OLLAMA_EMBEDDING_MODEL:-mxbai-embed-large}
+services:
+  init:
+    environment: *local
+    extra_hosts: [host.docker.internal:host-gateway]
+  app:
+    environment: *local
+    extra_hosts: [host.docker.internal:host-gateway]
+  worker:
+    environment: *local
+    extra_hosts: [host.docker.internal:host-gateway]
+networks:
+  office:
+    internal: false

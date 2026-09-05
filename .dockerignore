@@ -1,0 +1,15 @@
+.git
+.runtime
+.venv
+.env
+.env.*
+__pycache__
+*.db*
+data
+logs
+models
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+dist

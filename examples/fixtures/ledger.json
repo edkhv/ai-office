@@ -1,0 +1,17 @@
+{
+  "fixture_version": "northline-v1", "synthetic": true, "company": "Northline Demo", "project": "Север",
+  "as_of": "2026-09-07T09:00:00+03:00",
+  "records": [
+    {"id":"opening","type":"cash","amount":"2000000.00","currency":"RUB","direction":"opening"},
+    {"id":"receipt","type":"cash","amount":"1200000.00","currency":"RUB","direction":"in"},
+    {"id":"payment","type":"cash","amount":"900000.00","currency":"RUB","direction":"out"},
+    {"id":"internal-transfer","type":"cash","amount":"50000.00","currency":"RUB","direction":"internal"},
+    {"id":"invoice-01","type":"receivable","amount":"300000.00","paid":"20000.00","due_at":"2026-09-01T12:00:00+03:00","currency":"RUB"},
+    {"id":"invoice-02","type":"receivable","amount":"170000.00","paid":"0.00","due_at":"2026-09-05T12:00:00+03:00","currency":"RUB"},
+    {"id":"invoice-future","type":"receivable","amount":"90000.00","paid":"0.00","due_at":"2026-09-12T12:00:00+03:00","currency":"RUB"},
+    {"id":"north-contract","type":"contract","amount":"1800000.00","currency":"RUB","status":"signed_not_received"},
+    {"id":"north-costs","type":"forecast_cost","amount":"1440000.00","currency":"RUB"},
+    {"id":"steel-old","type":"price_old","amount":"100.00","currency":"RUB","unit":"kg","delivery":"warehouse","tax":"VAT included"},
+    {"id":"steel-new","type":"price_new","amount":"114.00","currency":"RUB","unit":"kg","delivery":"warehouse","tax":"VAT included"}
+  ]
+}
