@@ -1,46 +1,41 @@
 # AI Office implementation status
 
-Updated 2026-09-05. Version 0.1.0-alpha. Software MVP is implemented and locally demonstrated. No hardware integration claim.
+Updated 2026-09-07 (Europe/Moscow). Version 0.1.0-alpha plus the customer demonstration increment. This is a runnable software prototype, not a production installation or hardware-validation claim.
 
-## Completed and verified
+## Implemented
 
-- Original repository read at `d24f1e98078009b89ee1a93eedc61bc1fc3be8f4`; original tracked files unchanged; no original LICENSE found.
-- Separate project, Python 3.11, actual uv.lock, FastAPI/Pydantic, SQLAlchemy/Alembic/SQLite WAL, separate leased worker, Qdrant, CrewAI/Ollama and local vanilla UI.
-- Durable instruction → plan → clarification/approval/rejection → real local tasks. Exact payload/version/hash/expiry approvals, role revalidation, idempotency, atomic local execution and audit.
-- Markdown/TXT source versions, recoverable pending/failed indexing, current-version retrieval, pre-context SQL/Qdrant ACL filtering, protected citations and persisted-answer revocation.
-- Five Decimal metrics, actual source rows/hashes/formulas, timestamps/freshness, on-demand briefing and audit.
-- English/Russian desktop/mobile UI. Seven actual screenshots and a browser walkthrough with no external browser requests or JS errors.
-- Deterministic demo is clearly marked. Real local CrewAI Planner/Reviewer + Ollama and embedding calls were exercised. Compatible HTTP contract is unit-tested; not on-device validated.
-- Documentation: baseline/provenance, architecture, threat model, operations, data lineage, capability matrix, roadmap, continuity, demo guide, English partner overview and hardware plan.
+- Preserved FastAPI/Pydantic, CrewAI/Ollama, LangChain/Qdrant, Docker Compose and pytest. SQLAlchemy/Alembic/SQLite WAL and one separate leased worker own durable state. The original `edkhv/ai-docs-assistant` repository remains unchanged.
+- Instruction → typed plan → clarification/approval/rejection → real local tasks. Exact version/hash/expiry approvals, creator-only decisions, actor/organization/assignee revalidation, queue limits, restart fencing, atomic execution and audit.
+- Text PDF and DOCX, including tables, alongside TXT/Markdown: bounded extraction in a separate process, byte-preserved originals, immutable text/versions, page/paragraph/table-row source anchors, SQL/Qdrant ACL filtering, protected originals and saved-answer revocation. OCR is not implemented.
+- Excel/CSV catalogs and versioned RUB quotations. A user reviews proposed SKU/quantity pairs; Decimal code calculates discounts, VAT and totals. Why exposes formula and catalog rows. DOCX/PDF exports use the same saved calculation and mark unapproved revisions as drafts. A quoted task is created only after exact-version approval.
+- Personal task assignees, My/Today/Overdue/Blocked filters, UTC storage and IANA local-day boundaries. Team visibility is retained; assigned employee tasks are updated only by their assignee or a manager/owner. SQL counters cover all visible records, including beyond the first page.
+- Five synthetic Northline financial metrics remain separate from user-uploaded files, catalogs and stored task facts. The on-demand briefing links task records and distinguishes synthetic finance. No notification scheduler or external sending exists.
+- Existing demo and local-model paths, bilingual interface, operations/security/hardware documentation and supplied synthetic examples. The new customer and original interface walkthroughs were both verified against the current Docker demo.
 
-## Checks
+## Current verification
 
-84 unit/security tests passed, 3 real-Qdrant integration tests passed, 4 demo evals passed, 7 live HTTP smoke checks passed. Ruff/format/mypy and package build passed. Fresh Compose build/start and app/worker restart with preserved rows passed. See docs/VALIDATION.md and docs/validation/ for scope and timestamps.
+Final local backend checks passed: **149 unit/security tests**, 3 integration tests deselected, **83%** aggregate coverage; **3 real-Qdrant integration tests**; **4 deterministic demo evals**. `make lint` passed Ruff, formatting for all 81 Python files and mypy on contracts/config/metrics. Frozen installation and wheel/source build passed, including the new modules, embedded export font and its license. Parser subprocesses are exercised but are not included in parent-process coverage instrumentation.
 
-Dependency audit: reduced from 20 findings across 8 packages to 4 remaining advisories in unused transitive ChromaDB 1.1.1. This is not a clean dependency-security result. See docs/DEPENDENCY_REVIEW.md.
+The 28 quote unit/security cases cover deterministic rounding, unknown SKUs, formulas, false spreadsheet dimensions, stale quote/catalog/source access, stale actor roles, concurrent/repeated approval, reclaimed-worker fencing, XML controls, long 100-line exports and oversized requests without silent truncation. Task tests cover migration from the initial schema with existing records preserved, per-assignee updates, inactive/foreign-team assignees, revocation between approval and execution, offset/DST deadlines, counters beyond 50 tasks and approval queue limits. Existing crash-before-commit rollback tests remain passing.
 
-Secret scan: Gitleaks 8.30.1 scanned the final staged publication tree with zero findings; custom tracked-file publication gate and staged diff whitespace check passed. The initial scan matched a synthetic evidence marker; its wording was changed without suppressing scanner rules. No real secret was found in that result.
+The connected customer browser scenario passed **twice consecutively with retained data** against the current Docker image, including deliberately delayed/overlapping catalog responses: PDF/DOCX upload and anchored sources, catalog import, reviewed quote revisions, formula, draft/approved DOCX/PDF export, assigned task, overdue/blocked filters and briefing. Five actual EN/RU/mobile customer screenshots and seven refreshed original walkthrough screenshots were captured with **zero browser errors or external requests**. The original live HTTP smoke passed **7 checks**, 0 failures. Visual review covered the source viewer, Russian quote interface and rendered exports. See [current validation evidence](docs/VALIDATION.md).
 
-## Publication
+The refreshed dependency audit still reports **4 advisories in ChromaDB 1.1.1**, constrained transitively by CrewAI. No advisories were reported for the newly added document/catalog/export packages. This is not a clean dependency result. See [dependency review](docs/DEPENDENCY_REVIEW.md) and [current dependency evidence](docs/validation/customer-dependencies.json).
 
-Public repository: https://github.com/edkhv/ai-office, branch main. Software commit `a9166bdd3fc5a3af804841a088c30f1663bf3292` passed both remote quality and demo jobs: https://github.com/edkhv/ai-office/actions/runs/33960962345. This includes a clean Linux x86_64 frozen install, lint/type checks, 84 unit/security tests, 3 real-Qdrant integration tests, 4 demo evals, package build, publication gate, Gitleaks and Compose demo/smoke/restart/repeat smoke.
+## Publication and earlier evidence
 
-The initial quality run failed because pytest's ignored .runtime parent did not exist in a clean checkout. Explicit bootstrap creation fixed it; an independent fresh-directory local run and the repeated remote CI passed. The original failed run remains visible in GitHub history. Subsequent documentation commits record this evidence; they do not change business code. Release identifier: `v0.1.0-alpha`; no production-readiness or clean dependency-audit claim.
+Repository: https://github.com/edkhv/ai-office. The existing public `main` before this increment is `2f023316ff52bc5096771eac0719a128443d9a87`, the hardware-neutral naming update. Earlier software CI, Docker smoke/restart and actual browser screenshots are preserved in [VALIDATION.md](docs/VALIDATION.md) and `docs/validation/`; they are historical evidence.
 
-## Honest limits
+The customer increment is submitted through repository pull requests; see [pull requests](https://github.com/edkhv/ai-office/pulls) and [latest GitHub Actions results](https://github.com/edkhv/ai-office/actions). Local verification below does not assert remote CI success. The original release identifier remains `v0.1.0-alpha`; git history and the old tag are not rewritten.
 
-Local AI Station: **Target hardware; not yet validated on device.** No device, driver, vendor runtime, device compatibility, throughput or purchase/partnership is asserted. The target YAML is descriptive, not a driver installer.
+## Limits and next steps
 
-No external sending, live business connector, Office Manager, DOCX/PDF/OCR, meetings, Investor Room, scheduler, encrypted backup/restore, travel synchronization or P2 workforce implementation. Roadmap entries remain planned. No production, multi-tenant, independent model-quality or HA claim. Reindex CLI requires owner access and a maintenance window. Demo only plans its supported procurement scenario and requires confirmed structured assignment fields.
+**Local AI Station 96–128 GB: Target hardware; not yet validated on device.** Vendor/runtime, performance, capacity, power and recovery remain untested on a target station. Application development does not require buying the proposed hardware.
 
-## Reproduce / continue
+No production deployment, independent statistical model-quality result, OCR, live mail/CRM/accounting connector, external messaging, scheduler, user-administration workflow, empty-customer initialization, encrypted backup/restore, Investor Room, meetings, multi-tenant isolation or high availability is delivered. The broader Office Manager and P2 directions remain in the [roadmap](docs/ROADMAP.md). Existing local-model Planner/Reviewer evidence does not validate new quote-generation quality.
 
-`make demo` → http://127.0.0.1:8090 → private token from `make credential`. `make down` preserves data. Checks: `make lint`, `make test`, `make integration-test`, `make eval-demo`, `make smoke`.
+Resolve or isolate the remaining dependency advisories, establish repeatable human-labeled model evaluations and implement production provisioning/backup/security gates before a real-data production pilot. No distribution license has yet been selected.
 
-Next engineering step: resolve/isolate ChromaDB dependency advisories and build a repeated, human-labeled real-model evidence/abstention suite; then implement one read-only business connector. Do not hide this work behind claims of device readiness.
+## Reproduce
 
-## Hardware-neutral naming update — 2026-09-05
-
-The target is now **Local AI Station 96–128 GB**, without a mandatory vendor, accelerator or separate host. Updated the application/API, bilingual README, capability registry, hardware profile, validation plan, roadmap and partner material. Development continues on available computers; physical performance and delivery checks remain `not_run`. No hardware test result was added.
-
-Validation for this change: Ruff/format/mypy passed; 84 existing unit/security tests passed (3 integration tests deselected); the Docker demo rebuilt and reached healthy state. Seven actual application screenshots were regenerated by the existing browser walkthrough with no browser errors or external requests. Previous dependency findings and device limitations remain recorded.
+`make demo` → http://127.0.0.1:8090 → private token from `make credential`. `make down` preserves data. Follow [the walkthrough](docs/DEMO_WALKTHROUGH.md) for document → catalog/quote → assigned task. Checks: `make lint`, `make test`, `make integration-test`, `make eval-demo`, then `make smoke`, `make customer-demo` and `make screenshots` for live checks.

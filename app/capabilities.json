@@ -5,12 +5,13 @@
     "validation": "integration",
     "mode": "demo",
     "test_refs": [
-      "tests/unit/test_workflows.py"
+      "tests/unit/test_workflows.py",
+      "tests/unit/test_task_assignments.py"
     ],
     "limitations": [
-      "Local tasks and unsent drafts only"
+      "Local tasks and unsent drafts only; individual assignments require explicit user selection"
     ],
-    "checked_at": "2026-09-05T10:25:08.308945+00:00"
+    "checked_at": "2026-09-06T21:35:48+00:00"
   },
   {
     "module": "Knowledge",
@@ -18,12 +19,44 @@
     "validation": "integration",
     "mode": "demo",
     "test_refs": [
-      "tests/security/test_knowledge.py"
+      "tests/security/test_knowledge.py",
+      "tests/security/test_document_formats.py"
     ],
     "limitations": [
-      "Markdown/TXT only; hash embedding demo is not semantic quality validation"
+      "Text PDF, DOCX tables, TXT/Markdown; no OCR; bounded parser process is not an OS sandbox; hash demo embeddings do not validate semantic quality"
     ],
-    "checked_at": "2026-09-05T10:25:08.309485+00:00"
+    "checked_at": "2026-09-06T21:35:48+00:00"
+  },
+  {
+    "module": "Commercial proposals",
+    "implementation": "implemented",
+    "validation": "integration",
+    "mode": "catalog_quote",
+    "test_refs": [
+      "tests/unit/test_quotes.py",
+      "tests/security/test_quote_security.py",
+      "tests/security/test_customer_api.py",
+      "scripts/customer_demo.py"
+    ],
+    "limitations": [
+      "RUB CSV/XLSX catalogs only; reviewed SKU/quantity suggestions; no outgoing sending; no statistical real-model quote-quality validation"
+    ],
+    "checked_at": "2026-09-06T21:54:00+00:00"
+  },
+  {
+    "module": "Task assignments and deadlines",
+    "implementation": "implemented",
+    "validation": "integration",
+    "mode": "stored_workflow_records",
+    "test_refs": [
+      "tests/unit/test_task_assignments.py",
+      "tests/security/test_customer_api.py",
+      "scripts/customer_demo.py"
+    ],
+    "limitations": [
+      "Existing local users and team visibility; on-demand briefing only; no scheduler or external notifications"
+    ],
+    "checked_at": "2026-09-06T21:54:00+00:00"
   },
   {
     "module": "Business Control",
@@ -66,13 +99,13 @@
     "checked_at": "2026-09-05T10:25:08.309491+00:00"
   },
   {
-    "module": "Investor Room, Office Manager, connectors",
+    "module": "Investor Room, mail/CRM connectors, scheduled notifications",
     "implementation": "planned",
     "validation": "not_run",
     "mode": "roadmap",
     "test_refs": [],
     "limitations": [
-      "P1/P2; not implemented"
+      "P1/P2; broader Office Manager workflows remain planned"
     ]
   },
   {

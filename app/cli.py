@@ -81,6 +81,7 @@ def main():
             docs = rows(conn, select(documents).where(documents.c.revoked.is_(False)))
         for doc in docs:
             source = k.get_document(actor, doc["id"], doc["current_version"])
+            original = k.original_document(actor, doc["id"], doc["current_version"])
             with transaction(engine) as conn:
                 conn.execute(
                     versions.update()
@@ -88,7 +89,13 @@ def main():
                     .values(state="pending")
                 )
             k.import_document(
-                actor, doc["name"], source["content"].encode(), doc["roles"], "reindex", doc["id"]
+                actor,
+                original["filename"] if original["original_preserved"] else doc["name"],
+                original["content"],
+                doc["roles"],
+                "reindex",
+                doc["id"],
+                content_type=original["media_type"],
             )
         print("Current sources indexed for the configured embedding specification.")
 

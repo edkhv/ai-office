@@ -1,6 +1,6 @@
 # Model providers
 
-Demo: `engine=deterministic_demo`, model_id=null, hash/lexical embeddings. Only the procurement example is supported; unspecified assignment fields or unsupported requests ask for clarification. Knowledge answers in demo are extractive snippets. This validates plumbing and policy, not model intelligence or semantic retrieval quality.
+Demo: `engine=deterministic_demo`, model_id=null, hash/lexical embeddings. Only the procurement example is supported; unspecified assignment fields or unsupported requests ask for clarification. Knowledge answers in demo are extractive snippets. Quote suggestions match explicit known `SKU × quantity` expressions; other request text is not interpreted and requires manual review. This validates plumbing and policy, not model intelligence or semantic retrieval quality.
 
 Ollama: set `AI_OFFICE_MODE=local_ollama`, `AI_OFFICE_EMBEDDING_PROVIDER=ollama`. Model and embedding identifiers are configurable; default examples are `qwen3:8b` and `mxbai-embed-large`. These are suggestions for development, not Local AI Station compatibility guarantees. No weights are downloaded by bootstrap.
 
@@ -21,3 +21,9 @@ Transport rejects redirects, ignores proxy environment, limits time/output and u
 CrewAI telemetry is disabled before import via OTEL_SDK_DISABLED and CREWAI_DISABLE_TELEMETRY, with tracing=False and project-local declined consent. A PrivateCrew override suppresses SDK content replay storage; stdout/stderr from kickoff are captured because SDK errors can otherwise echo prompts. No user-wide CrewAI preferences are changed. Socket-denial unit tests run actual CrewAI with mocked local HTTP. The opt-in measured script restricts Python socket connects to loopback; this is test evidence, not a universal firewall guarantee.
 
 `uv run python scripts/local_llm.py` is an explicit installed-model check. Results, including an earlier rejected attempt, are documented in VALIDATION.md. It does not prove repeated statistical quality, factual entailment or device performance.
+
+## Quote suggestions
+
+The quote worker uses the same explicit local transport and schema-repair boundary to propose SKU/quantity/discount lines and accompanying prose. The server validates each SKU against the selected catalog; unknown items fail visibly. Real-model suggestions select explicit SKU candidates when possible and reject a context exceeding 100 catalog items or 12,000 serialized catalog characters. Oversized requests must be shortened explicitly instead of being silently interpreted only in part. Prices, VAT and totals are never accepted from the model. The UI presents suggestions for review before saving the exact quote and proposing a local task. Document text and catalog descriptions are untrusted input, with no model tools or outgoing business actions.
+
+A saved suggestion run rechecks document/catalog access before returning its input/result. Provider/schema failures remain failed jobs and do not fall back to demo. The new quote-generation path has mocked-transport tests; the earlier installed-model Planner/Reviewer check does not establish real-model quote quality. Repeatable customer-specific evaluations remain pending.

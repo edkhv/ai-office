@@ -2,10 +2,12 @@ import json
 import logging
 import time
 from pathlib import Path
+from typing import Literal
+from urllib.parse import quote
 
 from fastapi import Depends, FastAPI, File, Form, Header, Query, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
@@ -20,7 +22,7 @@ from app.errors import DomainError
 from app.knowledge import Knowledge
 from app.providers import provider_for
 from app.schema_v1 import audit, heartbeats, runs, sessions
-from app.workflows import Workflows, task_list, update_task
+from app.workflows import Workflows, allowable_assignees, task_counts, task_list, update_task
 
 
 def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=time.time):
@@ -58,10 +60,16 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
         try:
             # Bound streamed bodies as well as Content-Length; uploads include multipart overhead.
             if request.method in {"POST", "PATCH", "PUT"}:
+                upload_route = request.method == "POST" and request.url.path == "/api/v1/documents"
+                request_limit = (
+                    settings.max_binary_upload_bytes if upload_route else settings.max_upload_bytes
+                )
+                if request.method == "POST" and request.url.path == "/api/v1/catalogs":
+                    request_limit = 2 * 1024 * 1024
                 body = bytearray()
                 async for part in request.stream():
                     body.extend(part)
-                    if len(body) > settings.max_upload_bytes + 16384:
+                    if len(body) > request_limit + 16384:
                         raise DomainError("REQUEST_TOO_LARGE", 413)
                 request._body = bytes(body)
             response = await call_next(request)
@@ -237,6 +245,10 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
             else "Local model output requires verification; synthetic business records",
         }
 
+    from app.quote_routes import make_quote_router
+
+    app.include_router(make_quote_router(actor, workflows))
+
     @app.post("/api/v1/commands", status_code=202)
     def command(
         body: Command, request: Request, idempotency_key: str = Header(), who=Depends(actor)
@@ -283,9 +295,57 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
     def get_tasks(
         limit: int = Query(default=50, ge=1, le=100),
         offset: int = Query(default=0, ge=0),
+        mine: bool = False,
+        assignee_id: str | None = Query(default=None, min_length=1, max_length=100),
+        status: Literal["todo", "in_progress", "blocked", "done"] | None = None,
+        due: Literal["today", "overdue"] | None = None,
+        timezone: str = Query(default="UTC", min_length=1, max_length=100),
         who=Depends(actor),
     ):
-        return task_list(engine, who, limit, offset)
+        return task_list(
+            engine,
+            who,
+            limit,
+            offset,
+            mine=mine,
+            assignee_id=assignee_id,
+            status=status,
+            due=due,
+            timezone=timezone,
+            now=clock(),
+        )
+
+    @app.get("/api/v1/tasks/counts")
+    def get_task_counts(
+        mine: bool = False,
+        assignee_id: str | None = Query(default=None, min_length=1, max_length=100),
+        status: Literal["todo", "in_progress", "blocked", "done"] | None = None,
+        due: Literal["today", "overdue"] | None = None,
+        timezone: str = Query(default="UTC", min_length=1, max_length=100),
+        who=Depends(actor),
+    ):
+        return task_counts(
+            engine,
+            who,
+            clock(),
+            timezone,
+            mine=mine,
+            assignee_id=assignee_id,
+            status=status,
+            due=due,
+        )
+
+    @app.get("/api/v1/tasks/assignees")
+    def get_assignees(
+        team_id: Literal["procurement", "operations"] | None = None, who=Depends(actor)
+    ):
+        return allowable_assignees(engine, who, team_id)
+
+    @app.get("/api/v1/tasks/{task_id}")
+    def one_task(task_id: str, who=Depends(actor)):
+        from app.workflows import task_get
+
+        return task_get(engine, who, task_id)
 
     @app.patch("/api/v1/tasks/{task_id}")
     def patch_task(task_id: str, body: TaskUpdate, request: Request, who=Depends(actor)):
@@ -299,10 +359,12 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
         document_id: str | None = Form(None),
         who=Depends(actor),
     ):
+        binary = Path(file.filename or "").suffix.lower() in {".pdf", ".docx"}
+        limit = settings.max_binary_upload_bytes if binary else settings.max_upload_bytes
         return knowledge.import_document(
             who,
             file.filename or "",
-            file.file.read(settings.max_upload_bytes + 1),
+            file.file.read(limit + 1),
             roles.split(","),
             request.state.request_id,
             document_id,
@@ -323,6 +385,21 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
     ):
         doc = knowledge.get_document(who, document_id)
         return knowledge.get_document(who, document_id, version or doc["current_version"])
+
+    @app.get("/api/v1/documents/{document_id}/original")
+    def download_document(
+        document_id: str, version: int | None = Query(default=None, ge=1), who=Depends(actor)
+    ):
+        original = knowledge.original_document(who, document_id, version)
+        filename = quote(original["filename"], safe="")
+        return Response(
+            content=original["content"],
+            media_type=original["media_type"],
+            headers={
+                "Content-Disposition": f"attachment; filename*=UTF-8''{filename}",
+                "X-Original-Preserved": str(original["original_preserved"]).lower(),
+            },
+        )
 
     @app.patch("/api/v1/documents/{document_id}/acl")
     def acl(document_id: str, body: DocumentACL, request: Request, who=Depends(actor)):
@@ -355,8 +432,12 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
         return services.lineage(engine, who, metric_id, clock())
 
     @app.post("/api/v1/briefings")
-    def create_briefing(request: Request, who=Depends(actor)):
-        return services.briefing(engine, who, clock(), request.state.request_id)
+    def create_briefing(
+        request: Request,
+        timezone: str = Query(default="UTC", min_length=1, max_length=100),
+        who=Depends(actor),
+    ):
+        return services.briefing(engine, who, clock(), request.state.request_id, timezone)
 
     @app.get("/api/v1/audit")
     def get_audit(

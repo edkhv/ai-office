@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-09-06T21:35:48+00:00",
+  "command": "uv run pip-audit --local --skip-editable --format json",
+  "result": "known_findings_remain",
+  "findings": [
+    {
+      "package": "chromadb",
+      "version": "1.1.1",
+      "id": "PYSEC-2026-311",
+      "fix_versions": []
+    },
+    {
+      "package": "chromadb",
+      "version": "1.1.1",
+      "id": "GHSA-2wm9-hf6c-p5cr",
+      "fix_versions": []
+    },
+    {
+      "package": "chromadb",
+      "version": "1.1.1",
+      "id": "GHSA-36p7-vc44-83pf",
+      "fix_versions": []
+    },
+    {
+      "package": "chromadb",
+      "version": "1.1.1",
+      "id": "GHSA-xph7-9rjv-w5fr",
+      "fix_versions": []
+    }
+  ],
+  "new_direct_dependencies": {
+    "pypdf": "6.17.0",
+    "python-docx": "1.2.0",
+    "openpyxl": "3.1.5",
+    "reportlab": "4.5.1",
+    "defusedxml": "0.7.1"
+  },
+  "scope": "Installed Python development environment; not host/firmware/model/image certification"
+}

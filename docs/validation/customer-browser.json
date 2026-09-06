@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "PDF/DOCX upload, page citation and highlighted source",
+    "CSV catalog, document suggestion, edited quote, immutable revisions, formula and draft/approved exports",
+    "Approved personal assignment, exact task link, overdue/blocked filters and current briefing",
+    "Russian/English and mobile layout"
+  ],
+  "browser_errors": [],
+  "external_requests": [],
+  "screenshots": 5,
+  "data": "explicitly synthetic customer examples",
+  "checked_at": "2026-09-06T22:00:15.990588+00:00",
+  "consecutive_passes_with_retained_data": 2,
+  "delayed_and_overlapping_catalog_responses_checked": true,
+  "image_scope": "Latest local application image including actor-organization binding and current capability registry"
+}

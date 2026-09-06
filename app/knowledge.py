@@ -1,3 +1,4 @@
+import hashlib
 import os
 import re
 import time
@@ -12,6 +13,8 @@ from sqlalchemy import select
 
 from app.auth import require
 from app.db import digest, record, row, rows, transaction, uid
+from app.document_parser import MAX_BINARY_BYTES, parse_document
+from app.document_schema import sources
 from app.errors import DomainError
 from app.providers import embeddings_for
 from app.schema_v1 import documents, versions
@@ -73,7 +76,9 @@ class Knowledge:
             raise DomainError("RETRIEVAL_UNAVAILABLE", 503, retryable=True) from exc
 
     def source_path(self, file_name):
-        if not re.fullmatch(r"[a-f0-9-]{36}-\d+\.txt", file_name):
+        if not re.fullmatch(
+            r"[a-f0-9-]{36}-\d+(?:\.original\.(?:txt|md|pdf|docx)|\.txt)", file_name
+        ):
             raise DomainError("INVALID_STORAGE_ID", 400)
         root = self.settings.data_dir.resolve()
         directory = root / "documents"
@@ -107,22 +112,15 @@ class Knowledge:
             raise DomainError("INVALID_ACL", 422)
         if actor.role == "manager" and "manager" not in roles:
             raise DomainError("FORBIDDEN", 403)
-        if len(content) > self.settings.max_upload_bytes:
+        limit = (
+            getattr(self.settings, "max_binary_upload_bytes", MAX_BINARY_BYTES)
+            if Path(filename).suffix.lower() in {".pdf", ".docx"}
+            else self.settings.max_upload_bytes
+        )
+        if len(content) > limit:
             raise DomainError("UPLOAD_TOO_LARGE", 413)
-        if (
-            len(filename) > 200
-            or "/" in filename
-            or "\\" in filename
-            or Path(filename).suffix.lower() not in {".md", ".txt"}
-            or content_type not in {"text/plain", "text/markdown", "application/octet-stream"}
-        ):
-            raise DomainError("UNSUPPORTED_DOCUMENT", 415)
-        try:
-            text = content.decode("utf-8").replace("\r\n", "\n").strip()
-        except UnicodeError as exc:
-            raise DomainError("INVALID_UTF8", 422) from exc
-        if not text or "\x00" in text:
-            raise DomainError("EMPTY_OR_BINARY_DOCUMENT", 422)
+        parsed = parse_document(filename, content, content_type)
+        text = parsed["text"]
         hashed = digest(text)
         now = self.clock()
         observed_at = observed_at or datetime.fromtimestamp(now, UTC).isoformat()
@@ -147,6 +145,13 @@ class Knowledge:
                     .where(versions.c.document_id == document_id, versions.c.content_hash == hashed)
                     .order_by(versions.c.version.desc()),
                 )
+                # Equal extracted words in a new binary are not the same immutable source.
+                if existing and parsed["extension"] in {".pdf", ".docx"}:
+                    original = row(
+                        conn, select(sources).where(sources.c.version_id == existing["id"])
+                    )
+                    if not original or original["original_hash"] != parsed["original_hash"]:
+                        existing = None
                 if (
                     existing
                     and existing["state"] == "indexed"
@@ -189,7 +194,24 @@ class Knowledge:
                     )
                 )
                 version_row = self.new_version(conn, document_id, 1, hashed, observed_at)
+            source_metadata = row(
+                conn, select(sources).where(sources.c.version_id == version_row["id"])
+            )
+            if source_metadata is None:
+                source_metadata = {
+                    "version_id": version_row["id"],
+                    "original_file_name": (
+                        f"{document_id}-{version_row['version']}.original{parsed['extension']}"
+                    ),
+                    "original_hash": parsed["original_hash"],
+                    "original_name": filename,
+                    "text_hash": hashed,
+                    "media_type": parsed["media_type"],
+                    "anchors": parsed["anchors"],
+                }
+                conn.execute(sources.insert().values(**source_metadata))
         try:
+            self.write_original(source_metadata, content)
             path = self.source_path(version_row["file_name"])
             try:
                 fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
@@ -201,7 +223,7 @@ class Knowledge:
                 if digest(self.read_source(version_row["file_name"])) != hashed:
                     raise DomainError("SOURCE_HASH_MISMATCH", 409) from None
             store = self.ensure_store()
-            parts = chunks(text)
+            parts = self.anchored_chunks(text, source_metadata["anchors"])
             docs = [
                 Document(
                     page_content=part,
@@ -214,9 +236,10 @@ class Knowledge:
                         "start": start,
                         "end": end,
                         "observed_at": observed_at,
+                        "fragment_ref": ref,
                     },
                 )
-                for start, end, part in parts
+                for start, end, part, ref in parts
             ]
             ids = [
                 str(
@@ -281,6 +304,62 @@ class Knowledge:
             "replayed": False,
         }
 
+    @staticmethod
+    def anchored_chunks(text, anchors):
+        if not anchors:
+            return [
+                (start, end, part, f"characters:{start}-{end}") for start, end, part in chunks(text)
+            ]
+        parts = []
+        for anchor in anchors:
+            for start, end, part in chunks(text[anchor["start"] : anchor["end"]]):
+                parts.append((anchor["start"] + start, anchor["start"] + end, part, anchor["ref"]))
+        return parts
+
+    def write_original(self, metadata, content):
+        if hashlib.sha256(content).hexdigest() != metadata["original_hash"]:
+            raise DomainError("SOURCE_HASH_MISMATCH", 409)
+        path = self.source_path(metadata["original_file_name"])
+        try:
+            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            with os.fdopen(fd, "wb") as stream:
+                stream.write(content)
+                stream.flush()
+                os.fsync(stream.fileno())
+        except FileExistsError:
+            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+            with os.fdopen(fd, "rb") as stream:
+                if hashlib.sha256(stream.read()).hexdigest() != metadata["original_hash"]:
+                    raise DomainError("SOURCE_HASH_MISMATCH", 409) from None
+
+    def original_document(self, actor, document_id, version=None):
+        """Download bytes only after checking current ACL, even for historical versions."""
+        with self.engine.connect() as conn:
+            doc = self.get_document(actor, document_id, conn=conn)
+            doc = self.get_document(actor, document_id, version or doc["current_version"], conn)
+            metadata = row(conn, select(sources).where(sources.c.version_id == doc["source"]["id"]))
+        if metadata is None:
+            # Pre-migration text documents have no byte-preserved original. Return the known
+            # immutable normalized source with an explicit .txt filename rather than invent it.
+            return {
+                "content": doc["content"].encode(),
+                "filename": f"{doc['name']}.extracted.txt",
+                "media_type": "text/plain",
+                "original_preserved": False,
+            }
+        path = self.source_path(metadata["original_file_name"])
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        with os.fdopen(fd, "rb") as stream:
+            content = stream.read()
+        if hashlib.sha256(content).hexdigest() != metadata["original_hash"]:
+            raise DomainError("SOURCE_HASH_MISMATCH", 409)
+        return {
+            "content": content,
+            "filename": metadata["original_name"],
+            "media_type": metadata["media_type"],
+            "original_preserved": True,
+        }
+
     def new_version(self, conn, document_id, version, hashed, observed_at):
         values = dict(
             id=uid(),
@@ -321,6 +400,12 @@ class Knowledge:
                 raise DomainError("NOT_FOUND", 404)
             doc["source"] = source
             doc["content"] = self.read_source(source["file_name"])
+            if digest(doc["content"]) != source["content_hash"]:
+                raise DomainError("SOURCE_HASH_MISMATCH", 409)
+            metadata = row(conn, select(sources).where(sources.c.version_id == source["id"]))
+            doc["anchors"] = metadata["anchors"] if metadata else []
+            doc["original_preserved"] = metadata is not None
+            doc["original_url"] = f"/api/v1/documents/{document_id}/original?version={version}"
             doc["status"] = "current" if version == doc["current_version"] else "superseded"
         return doc
 
@@ -425,7 +510,7 @@ class Knowledge:
                 "version": m["version"],
                 "content_hash": m["content_hash"],
                 "fragment": doc.page_content,
-                "fragment_ref": f"characters:{m['start']}-{m['end']}",
+                "fragment_ref": m.get("fragment_ref", f"characters:{m['start']}-{m['end']}"),
                 "observed_at": m["observed_at"],
                 "status": "current",
                 "url": f"/api/v1/documents/{m['document_id']}?version={m['version']}",

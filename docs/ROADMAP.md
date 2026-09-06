@@ -1,16 +1,16 @@
 # Roadmap and future contracts
 
-All entries below are **implementation=planned, validation=not_run**. Written contracts are not shipped agents. The completed P0 slice is described in MVP_SCOPE and the evidence matrix. No medical diagnosis, prescribing, covert surveillance or employee personality scoring is planned.
+The completed P0 and customer demonstration increment are described in MVP_SCOPE and the evidence matrix. Text PDF/DOCX, catalog-based quotes with export/approval and personal task/deadline tracking are now implemented. Entries in the P1/P2 tables below remain **implementation=planned, validation=not_run**; written contracts are not shipped agents. No medical diagnosis, prescribing, covert surveillance or employee personality scoring is planned.
 
 ## P1 — small complete increments
 
 | Increment | Future input → output contract | Acceptance gate |
 |---|---|---|
-| Office Manager | Imported synthetic email + approved catalog → typed line items, code-calculated quote and reply draft | Prices/taxes match catalog, injection/ACL tests, no automatic sending |
-| DOCX / text PDF | Validated file → immutable source + extracted spans and citations | Format/size limits, accurate page anchors, parser isolation; scans/OCR separate |
+| Office Manager extension | Authorized mailbox import + existing catalog/quote core → linked request and reviewed reply | Scoped connector, import cursor, source rights and human-approved outgoing messages |
+| OCR / advanced documents | Scanned PDF/image or complex layout → reviewed text and position anchors | Bounded OCR process, confidence/reading-order checks, image evidence and ACL regressions |
 | Meetings | Authorized transcript → minutes, evidence spans, proposed tasks | No task writes before approval, uncertain speakers and missing deadlines marked |
 | Investor Room | Owner-approved evidence selection → versioned read-only snapshot | ID/date/scope/assumptions/revocation, separate role, no salaries or unrestricted internal documents; downloaded copies cannot be recalled |
-| Reminders | Due task + work-hour policy → proposed/local reminder | Scheduling, deduplication, quiet hours, opt-out and delivery evidence |
+| Scheduled reminders | Existing assigned task/deadline facts + work-hour policy → notification | Scheduler, deduplication, quiet hours, opt-out and delivery evidence; current briefing is on demand |
 | One read-only connector | Scoped credential + cursor → typed SourceSnapshot | Real integration test, source timestamp, availability and freshness; no write scopes |
 | Encrypted backup/restore | Consistent DB/source manifest → encrypted off-site archive → isolated restore | Reviewed tool, separate keys, repeated restore drill and measured RPO/RTO |
 | Local AI Station pilot | Vendor-supported hardware/runtime/model → the same provider contract | Gate-by-gate physical validation and measured workload; no device claim until passed |

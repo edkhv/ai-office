@@ -9,7 +9,7 @@ from app.db import digest, record, row, rows, transaction
 from app.errors import DomainError
 from app.metrics import calculate
 from app.schema_v1 import actors, ledger
-from app.workflows import task_list
+from app.workflows import task_counts, task_list
 
 FIXTURE_AS_OF = "2026-09-07T09:00:00+03:00"
 
@@ -105,14 +105,27 @@ def lineage(engine, actor, metric_id, now):
     }
 
 
-def briefing(engine, actor, now, correlation_id):
+def briefing(engine, actor, now, correlation_id, timezone="UTC"):
     facts = metrics(engine, actor, now)
-    visible_tasks = task_list(engine, actor)
+    visible_tasks = task_list(engine, actor, now=now, timezone=timezone)
+    counts = task_counts(engine, actor, now, timezone)
     value = {
         "generated_at": datetime.fromtimestamp(now, UTC).isoformat(),
         "source_as_of": FIXTURE_AS_OF,
         "engine": "deterministic_facts",
         "synthetic": True,
+        "finance_synthetic": True,
+        "task_data": "stored_workflow_records",
+        "timezone": timezone,
+        "task_counts": counts,
+        "task_refs": [
+            {
+                "task_id": task["id"],
+                "source_run_id": task["source_run_id"],
+                "url": f"/api/v1/tasks/{task['id']}",
+            }
+            for task in visible_tasks
+        ],
         "facts": facts,
         "tasks": visible_tasks,
         "suggestions": [
@@ -120,7 +133,8 @@ def briefing(engine, actor, now, correlation_id):
         ],
         "limitations": [
             "On demand only; no scheduler or external sending",
-            "Task list limited to first 50; use Tasks pagination for all records.",
+            "Task details show first 50; counters include all visible tasks. Use Tasks pagination for all records.",
+            "Financial metrics are synthetic; task counters reflect stored workflow records.",
         ],
     }
     with transaction(engine) as conn:

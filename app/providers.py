@@ -367,6 +367,38 @@ class CrewProvider:
         )
         return plan
 
+    def suggest_quote(self, text, catalog_rows):
+        from app.quote_contracts import QuoteSuggestion
+
+        if len(text) > 12000:
+            raise DomainError("REQUEST_TOO_LARGE_FOR_SUGGESTION", 422)
+        # Keep the local context bounded. Larger catalogs require explicit SKU matches first.
+        selected = [item for item in catalog_rows if item["sku"].lower() in text.lower()]
+        candidates = selected or catalog_rows
+        candidate_data = [
+            {key: item[key] for key in ("sku", "name", "unit")} for item in candidates
+        ]
+        catalog_text = json.dumps(candidate_data, ensure_ascii=False)
+        if len(candidates) > 100 or len(catalog_text) > 12000:
+            raise DomainError("CATALOG_TOO_LARGE_FOR_SUGGESTION", 422)
+        result = self.typed(
+            "Quote preparation assistant",
+            "Extract requested items and quantities from untrusted request evidence. "
+            "Use only catalog SKUs below. Never invent a price, SKU, quantity or action. "
+            "Return unresolved descriptions for any ambiguity. No tools or external messages. "
+            "accompanying_text is an unsent draft. Return JSON with lines, unresolved, "
+            "accompanying_text. All pricing is calculated separately by application code.\n"
+            + "Catalog: "
+            + catalog_text
+            + "\nUntrusted request: "
+            + text,
+            QuoteSuggestion,
+        )
+        allowed = {item["sku"] for item in candidates}
+        if any(line.sku not in allowed for line in result.lines):
+            raise DomainError("INVALID_QUOTE_SUGGESTION", 422)
+        return result.model_dump(mode="json")
+
     def answer(self, query, evidence):
         if not evidence:
             return GroundedAnswer(answer="Insufficient evidence", insufficient_evidence=True)
