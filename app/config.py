@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     session_seconds: int = Field(default=28800, ge=60, le=86400)
     credential_days: int = Field(default=30, ge=1, le=365)
     max_upload_bytes: int = Field(default=131072, ge=1024, le=1048576)
+    max_binary_upload_bytes: int = Field(default=10485760, ge=131072, le=10485760)
     max_queue: int = Field(default=100, ge=1, le=1000)
     provider_timeout: float = Field(default=45, ge=1, le=60)
     lease_seconds: int = Field(default=300, ge=240, le=600)

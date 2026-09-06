@@ -19,6 +19,7 @@ class Command(DTO):
     text: str = Field(min_length=3, max_length=4000)
     team_id: Literal["procurement", "operations"] | None = None
     due_at: AwareDatetime | None = None
+    assignee_id: str | None = Field(default=None, min_length=1, max_length=100)
 
 
 class ProposedTask(DTO):
@@ -26,6 +27,7 @@ class ProposedTask(DTO):
     team_id: Literal["procurement", "operations"]
     due_at: AwareDatetime
     acceptance_criteria: str = Field(min_length=3, max_length=1200)
+    assignee_id: str | None = Field(default=None, min_length=1, max_length=100)
 
 
 class TaskPlan(DTO):
@@ -46,6 +48,8 @@ class Clarification(DTO):
     version: int = Field(ge=1)
     team_id: Literal["procurement", "operations"]
     due_at: AwareDatetime
+
+    assignee_id: str | None = Field(default=None, min_length=1, max_length=100)
 
 
 class TaskUpdate(DTO):

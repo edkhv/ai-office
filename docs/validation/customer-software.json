@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-09-06T21:55:17.536253+00:00",
+  "code_state": "Customer increment working tree before publication; see GitHub CI for committed revision evidence",
+  "platform": "macOS ARM64 / Python 3.11.15; real Qdrant Docker container",
+  "unit_security": {
+    "command": "make test",
+    "tests": 149,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_deselected": 3,
+    "aggregate_coverage_percent": 83,
+    "parser_subprocess_coverage_instrumented": false
+  },
+  "qdrant_integration": {
+    "command": "make integration-test",
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "demo_evaluation": {
+    "command": "make eval-demo",
+    "passed": 4,
+    "failed": 0,
+    "llm_quality": "not_measured"
+  },
+  "lint": {
+    "command": "make lint",
+    "ruff": "passed",
+    "format_python_files": 81,
+    "mypy": "passed"
+  },
+  "package": {
+    "command": "uv build",
+    "result": "passed",
+    "new_modules_font_license_included": true
+  },
+  "hardware_validation": "not_run",
+  "new_real_model_quote_quality": "not_measured",
+  "dependency_audit": "4 existing transitive ChromaDB advisories; see customer-dependencies.json"
+}

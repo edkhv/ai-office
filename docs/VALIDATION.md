@@ -1,4 +1,25 @@
-# Validation evidence — 2026-09-05
+# Validation evidence
+
+## Customer increment — 2026-09-07 (Europe/Moscow)
+
+| Current check | Result | Scope |
+|---|---|---|
+| Frozen install and `make lint` | Passed | Added parser/export dependencies; Ruff check/format of 81 Python files; mypy contracts/config/metrics |
+| `make test` | 149 passed, 3 integration tests deselected; 83% coverage | Unit/security with socket denial; real parser subprocesses; new customer HTTP APIs; actual CrewAI quote step over mocked local transport |
+| `make integration-test` | 3 passed | Isolated real Qdrant container, current ACL/version/recovery behavior |
+| `make eval-demo` | 4 passed | Real SQL outcomes with deterministic providers; model quality not measured |
+| `uv build` | Passed | New modules, export font and font license included |
+| `make customer-demo` | Passed twice consecutively, 5 screenshots | Current Docker image and retained data; PDF/DOCX → catalog/quote → draft/approved exports → assigned task/deadline/briefing; delayed/overlapping catalog response checks; EN/RU/mobile; zero JS errors/external requests |
+| `make smoke` | 7 passed, 0 failed | Current live API/worker/Qdrant, unchanged core workflow, finance and role boundaries |
+| `make screenshots` | Passed, 7 screenshots | Original login/plan/approval/task/source/lineage/system/RU/mobile walkthrough; zero JS errors/external requests |
+
+The new quote suite has 28 unit/security cases, including long 100-line DOCX/PDF exports, exact formula/source provenance, unchanged history after catalog updates, revoked source/catalog access, cached-actor downgrade, concurrent approvals and reclaimed-worker fencing. The initial-schema migration test preserves old task records. Binary extraction tests launch the real child process, whose lines are not measured by parent-only coverage. The two customer browser runs retained existing data and passed on the image containing the final actor-organization check and capability registry. Russian dynamic labels, source viewer and rendered exports were visually reviewed. Earlier CI reports below remain historical.
+
+Machine-readable current evidence: [backend checks](validation/customer-software.json), [customer browser](validation/customer-browser.json), [core browser regression](validation/customer-core-browser.json), [live HTTP smoke](validation/customer-http-smoke.json). These local results do not assert a remote CI result; follow [GitHub Actions](https://github.com/edkhv/ai-office/actions) for the published revision.
+
+The refreshed dependency report still contains the same four ChromaDB advisories; new direct dependencies have no reported findings in that run. See [current dependency evidence](validation/customer-dependencies.json). Backend tests cover original-download ACL, PDF pages/DOCX rows, malicious XML, formula cells, Decimal quote arithmetic, stale versions, protected exports, assignees, timezone boundaries and migration of existing tasks.
+
+## Initial release evidence — 2026-09-05
 
 Environment: Python 3.11.15 on macOS ARM64; Docker Engine 29.7.2 running a Linux ARM64 VM; Qdrant v1.16.2. These results do not validate the proposed Local AI Station or arbitrary platform combinations. This report distinguishes software behavior from model quality.
 

@@ -1,4 +1,4 @@
-.PHONY: demo local down credential test lint integration-test eval-demo smoke doctor screenshots check-publication
+.PHONY: demo local down credential test lint integration-test eval-demo smoke doctor screenshots customer-demo check-publication
 ROLE ?= owner
 
 demo:
@@ -26,5 +26,7 @@ doctor:
 	docker compose exec -T app python -m app.cli doctor
 screenshots:
 	uv run --frozen python scripts/screenshots.py
+customer-demo:
+	uv run --frozen python scripts/customer_demo.py
 check-publication:
 	uv run --frozen python scripts/check_publication.py

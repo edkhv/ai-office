@@ -13,3 +13,11 @@ Fixture: `examples/fixtures/ledger.json`, `northline-v1`, synthetic=true. Snapsh
 All calculation operands are Decimal. Money is serialized as strings. Each MetricResult contains formula ID/version, kind, input IDs and hashes, source time, completeness, freshness and warnings. `/metrics/{id}/lineage` returns the same metric plus actual SQL ledger rows, not a hand-authored explanatory card. Unit tests exercise partial payments, missing required sources, mixed currencies, non-comparable tax/delivery/unit basis, zero denominators and stale/future snapshots.
 
 `forecast` is distinct from observed revenue. A signed contract is not a receipt. Similarity scores are not evidence confidence. Traceability demonstrates where a result came from; it does not independently establish the truth or completeness of an external source. This alpha has no real accounting connector.
+
+## Customer quotations and task facts
+
+Quote calculations are separate from the synthetic finance fixture. Every saved quote fixes one catalog version and its row hashes, selected SKU, quantity and per-line discount. `net = ROUND_HALF_UP(price_without_vat × quantity × (1 − discount_percent / 100), 2)`; `vat = ROUND_HALF_UP(net × vat_percent / 100, 2)`; each line total is net + VAT. Document totals sum rounded lines. Values are Decimal and serialize as strings; no exchange conversion is performed.
+
+The Why view and DOCX/PDF exports share that immutable calculation and include catalog version/row evidence. Importing new prices does not rewrite past quotes; current-price approval checks prevent unnoticed stale execution. User uploads do not replace the Northline financial ledger, and quote totals are not recognized revenue.
+
+Briefing task counts are SQL calculations over all records visible to the actor, using the server clock and explicit timezone for local-day boundaries. Each displayed task links to its task ID and source run. The details page is bounded to 50 entries, but the counts are not. `finance_synthetic=true` and `task_data=stored_workflow_records` distinguish the two origins.
