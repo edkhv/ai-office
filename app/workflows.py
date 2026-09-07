@@ -586,6 +586,8 @@ def validate_assignees(conn, actor, plan):
 
 
 def allowable_assignees(engine, actor, team_id=None):
+    from app.workspace_schema import user_profiles
+
     scope = and_(actors.c.organization_id == actor.organization_id, actors.c.active.is_(True))
     if actor.role == "employee":
         scope = and_(scope, actors.c.team_id == actor.team_id)
@@ -594,7 +596,10 @@ def allowable_assignees(engine, actor, team_id=None):
     with engine.connect() as conn:
         return rows(
             conn,
-            select(actors.c.id, actors.c.role, actors.c.team_id).where(scope).order_by(actors.c.id),
+            select(actors.c.id, actors.c.role, actors.c.team_id, user_profiles.c.display_name)
+            .select_from(actors.outerjoin(user_profiles, actors.c.id == user_profiles.c.actor_id))
+            .where(scope)
+            .order_by(actors.c.id),
         )
 
 

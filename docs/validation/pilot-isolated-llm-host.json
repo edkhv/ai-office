@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-09-07T05:44:16.719124+00:00",
+  "synthetic_inputs": true,
+  "model": "qwen3.5:9b",
+  "core_sdk_absent": true,
+  "checks": [
+    {
+      "name": "runtime_health",
+      "passed": true,
+      "details": {
+        "ready": true
+      },
+      "seconds": 0.140383
+    },
+    {
+      "name": "planner_and_reviewer",
+      "passed": false,
+      "error_type": "DomainError",
+      "error_code": "REVIEW_REJECTED",
+      "seconds": 32.083532
+    },
+    {
+      "name": "grounded_answer",
+      "passed": true,
+      "details": {
+        "source_ids": [
+          "synthetic-budget"
+        ]
+      },
+      "seconds": 5.312777
+    },
+    {
+      "name": "quote_suggestion",
+      "passed": true,
+      "details": {
+        "matched_lines": 1
+      },
+      "seconds": 6.728776
+    },
+    {
+      "name": "gateway_embeddings",
+      "passed": true,
+      "details": {
+        "vectors": 2,
+        "dimensions": 4096
+      },
+      "seconds": 19.827377
+    }
+  ],
+  "deployment": "Host processes: core-only venv client and gateway, development SDK venv agent runtime, host Ollama; not a Docker execution result"
+}

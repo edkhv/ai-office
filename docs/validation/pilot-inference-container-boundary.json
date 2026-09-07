@@ -1,0 +1,57 @@
+{
+  "containers": [
+    {
+      "name": "/ai-office-inference-check-agent-runtime-1",
+      "image_id": "sha256:e62cd70a10c602cf229cd4806b7ba575fa4b832c4fbe138b79cab00c03dfec0d",
+      "networks": [
+        "ai-office-inference-check_inference"
+      ],
+      "mounts": [],
+      "ports": {},
+      "readonly_root": true,
+      "tmpfs": {
+        "/tmp": "uid=10001,gid=10001,mode=0700,size=128m"
+      },
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "user": "10001:10001"
+    },
+    {
+      "name": "/ai-office-inference-check-model-gateway-1",
+      "image_id": "sha256:041bdc602ad3892704bf3a1bffed8d8409af49f8bdde377d6bf404eadf82341b",
+      "networks": [
+        "ai-office-inference-check_inference",
+        "ai-office-inference-check_model-egress"
+      ],
+      "mounts": [],
+      "ports": {},
+      "readonly_root": true,
+      "tmpfs": {
+        "/tmp": "uid=10001,gid=10001,mode=0700,size=32m"
+      },
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "user": "10001:10001"
+    }
+  ],
+  "core_image_import_check": {
+    "crewai_absent": true,
+    "chromadb_absent": true,
+    "api_import_passed": true
+  },
+  "observed_runtime_connections": {
+    "model_gateway": "reachable",
+    "qdrant": "blocked",
+    "internet_1_1_1_1_443": "blocked"
+  },
+  "hardware_validation": "not_run",
+  "scope": "Observed Docker Desktop Linux ARM64 software boundary, not hardware or full penetration-test certification"
+}

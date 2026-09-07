@@ -182,7 +182,7 @@ def test_dst_and_invalid_timezone(ctx):
 def test_allowable_assignees_returns_no_credentials_and_only_active_team(ctx):
     visible = allowable_assignees(ctx["engine"], ctx["actors"]["owner"], "procurement")
     assert {a["id"] for a in visible} == {"manager", "employee"}
-    assert all(set(a) == {"id", "role", "team_id"} for a in visible)
+    assert all(set(a) == {"id", "role", "team_id", "display_name"} for a in visible)
     with transaction(ctx["engine"]) as conn:
         conn.execute(actors.update().where(actors.c.id == "employee").values(active=False))
     assert [a["id"] for a in allowable_assignees(ctx["engine"], ctx["actors"]["employee"])] == [

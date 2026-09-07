@@ -1,19 +1,59 @@
+# Isolated CrewAI runtime has no business-data volume or unrestricted egress.
 x-local: &local
   AI_OFFICE_MODE: local_ollama
   AI_OFFICE_EMBEDDING_PROVIDER: ollama
-  AI_OFFICE_OLLAMA_BASE_URL: http://host.docker.internal:11434
+  AI_OFFICE_AGENT_RUNTIME_URL: http://agent-runtime:8001
+  AI_OFFICE_OLLAMA_BASE_URL: http://model-gateway:8002
   AI_OFFICE_OLLAMA_MODEL: ${AI_OFFICE_OLLAMA_MODEL:-qwen3:8b}
   AI_OFFICE_OLLAMA_EMBEDDING_MODEL: ${AI_OFFICE_OLLAMA_EMBEDDING_MODEL:-mxbai-embed-large}
 services:
   init:
     environment: *local
-    extra_hosts: [host.docker.internal:host-gateway]
+    networks: [office, inference]
+    depends_on:
+      model-gateway:
+        condition: service_started
+      agent-runtime:
+        condition: service_started
   app:
     environment: *local
-    extra_hosts: [host.docker.internal:host-gateway]
+    networks: [office, web, inference]
   worker:
     environment: *local
+    networks: [office, inference]
+  agent-runtime:
+    image: ai-office-agent-runtime:0.1.0-alpha
+    build:
+      context: .
+      dockerfile: Dockerfile.agent-runtime
+    environment:
+      <<: *local
+      AI_OFFICE_AGENT_RUNTIME_URL: ''
+      AI_OFFICE_DATA_DIR: /tmp/ai-office-agents
+    networks: [inference]
+    read_only: true
+    tmpfs: ['/tmp:uid=10001,gid=10001,mode=0700,size=128m']
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    depends_on: [model-gateway]
+    restart: unless-stopped
+  model-gateway:
+    image: ai-office:0.1.0-alpha
+    build: .
+    command: [uvicorn, app.model_gateway:create_app, --factory, --host, 0.0.0.0, --port, '8002', --no-access-log]
+    environment:
+      <<: *local
+      AI_OFFICE_AGENT_RUNTIME_URL: ''
+      AI_OFFICE_OLLAMA_BASE_URL: ${AI_OFFICE_HOST_OLLAMA_URL:-http://host.docker.internal:11434}
+      AI_OFFICE_DATA_DIR: /tmp/ai-office-gateway
     extra_hosts: [host.docker.internal:host-gateway]
+    networks: [inference, model-egress]
+    read_only: true
+    tmpfs: ['/tmp:uid=10001,gid=10001,mode=0700,size=32m']
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: unless-stopped
 networks:
-  office:
-    internal: false
+  inference:
+    internal: true
+  model-egress: {}

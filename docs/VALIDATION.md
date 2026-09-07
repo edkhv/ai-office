@@ -1,5 +1,16 @@
 # Validation evidence
 
+## Company pilot increment — 2026-09-07
+
+- `make lint`: Ruff, formatting and mypy passed. `make test`: **202 passed**, 3 integration deselected, **84%** coverage. Fresh integration: **3 passed**; deterministic evals: **4 passed**.
+- Real-browser pilot: private setup, two employees, owner-only management, immediate token revocation, imported DOCX/catalog, quote approval, named overdue task and briefing; three screenshots; zero browser errors or external requests. [Evidence](validation/pilot-browser.json).
+- Real Docker/Qdrant recovery drill: company, source documents, quotation and assigned task preserved; old credentials revoked. [Procedure](continuity/PILOT_BACKUP_RESTORE.md).
+- Frozen core audit: 69 packages, zero findings. Optional SDK audit: four ChromaDB advisories remain; isolated runtime is a mitigation, not a clean SDK audit. [Dependency review](DEPENDENCY_REVIEW.md).
+- Fresh host HTTP-boundary model checks: health, sourced answer, quote suggestion and two 4096-dimensional embedding vectors passed; Planner/Reviewer rejected its sample (`REVIEW_REJECTED`). **4/5**, not a complete pass. [Evidence](validation/pilot-isolated-llm-host.json).
+
+The prior sections below retain their original verification scope and dates; their missing-feature statements describe those earlier increments.
+
+
 ## Customer increment — 2026-09-07 (Europe/Moscow)
 
 | Current check | Result | Scope |
@@ -44,6 +55,10 @@ A first model attempt with mistral:latest was rejected by the Reviewer. No model
 
 Unit tests cover concurrent/repeated approval, revised/expired/foreign approval, payload tampering, role revocation before execution, crash before commit, stale worker fencing, queue limits, document ACL changes before model context, stored answer revocation, IDOR, CSRF, login expiry/revocation/rate limits, unsafe uploads/symlinks/XSS, exact `valid`, HTTP redirect/timeout/no fallback, missing/partial/mixed-source arithmetic and zero denominators.
 
-Known test warnings: upstream Starlette/AnyIO and CrewAI deprecation warnings. They are not suppressed as passes. No independent LLM judge, repeated grounded-answer evaluation, load benchmark, multi-tenant test, hardware benchmark, encrypted restore drill or production security audit was performed.
+Known test warnings: upstream Starlette/AnyIO and CrewAI deprecation warnings. They are not suppressed as passes. In this earlier run no independent LLM judge, repeated grounded-answer evaluation, load benchmark, multi-tenant test, hardware benchmark, encrypted restore drill or production security audit was performed. The later pilot increment adds an encrypted restore drill; the other validation limits remain.
 
 Gitleaks 8.30.1 reported zero findings in the final staged publication tree and in remote CI. GitHub Actions quality and demo jobs passed on software commit `a9166bdd3fc5a3af804841a088c30f1663bf3292`: https://github.com/edkhv/ai-office/actions/runs/33960962345. The Linux x86_64 runner used Python 3.11.16; Docker uses pinned Python 3.11.15. The earlier clean-checkout failure was test-directory initialization and was fixed without skipping tests. Screenshots are generated from the running UI; they are not rendered design mockups.
+
+The fresh isolated Docker model-boundary run also passed **4/5** checks: health, sourced answer, quote suggestion and embeddings passed; Planner/Reviewer failed closed with `REVIEW_REJECTED`. [Docker model evidence](validation/pilot-isolated-llm-docker.json). This confirms the transport/model boundary for those samples, not reliable free-form planning or statistical model quality.
+
+Latest preserved-data demo regression: `make smoke` **7 passed**; `make customer-demo` completed the original customer workflow with **zero browser errors/external requests** and five refreshed EN/RU/mobile screenshots. Evidence: [legacy smoke](validation/pilot-legacy-smoke.json), [legacy customer browser](validation/pilot-legacy-customer.json).

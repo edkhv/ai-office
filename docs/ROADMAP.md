@@ -1,6 +1,6 @@
 # Roadmap and future contracts
 
-The completed P0 and customer demonstration increment are described in MVP_SCOPE and the evidence matrix. Text PDF/DOCX, catalog-based quotes with export/approval and personal task/deadline tracking are now implemented. Entries in the P1/P2 tables below remain **implementation=planned, validation=not_run**; written contracts are not shipped agents. No medical diagnosis, prescribing, covert surveillance or employee personality scoring is planned.
+The completed P0 and customer demonstration increment are described in MVP_SCOPE and the evidence matrix. Text PDF/DOCX, catalog-based quotes with export/approval, personal task/deadline tracking, empty-company setup, owner user administration and manual encrypted offline backup/restore are implemented. Entries in the P1/P2 tables below remain **implementation=planned, validation=not_run**; written contracts are not shipped agents. No medical diagnosis, prescribing, covert surveillance or employee personality scoring is planned.
 
 ## P1 — small complete increments
 
@@ -12,7 +12,7 @@ The completed P0 and customer demonstration increment are described in MVP_SCOPE
 | Investor Room | Owner-approved evidence selection → versioned read-only snapshot | ID/date/scope/assumptions/revocation, separate role, no salaries or unrestricted internal documents; downloaded copies cannot be recalled |
 | Scheduled reminders | Existing assigned task/deadline facts + work-hour policy → notification | Scheduler, deduplication, quiet hours, opt-out and delivery evidence; current briefing is on demand |
 | One read-only connector | Scoped credential + cursor → typed SourceSnapshot | Real integration test, source timestamp, availability and freshness; no write scopes |
-| Encrypted backup/restore | Consistent DB/source manifest → encrypted off-site archive → isolated restore | Reviewed tool, separate keys, repeated restore drill and measured RPO/RTO |
+| Scheduled/off-site recovery operations | Existing encrypted offline archive → scheduled separated storage and repeated drills | Operational key custody, scheduled restore checks and measured RPO/RTO; current manual restore is implemented |
 | Local AI Station pilot | Vendor-supported hardware/runtime/model → the same provider contract | Gate-by-gate physical validation and measured workload; no device claim until passed |
 | Database scaling | Validated PostgreSQL schema + worker leases | Migration/concurrency/load tests; SQLite behavior preserved |
 
@@ -43,4 +43,4 @@ Industry packs: construction, service businesses, retail, manufacturing, logisti
 
 Portable deployment candidate: a validated Local AI Station with 96–128 GB memory and SSD, optional separate management computer, separate 4G/5G router, primary internet and UPS. Maintain encrypted off-site copies and separately stored recovery keys. Redundant connectivity does not guarantee service in every outage. See continuity/RUNBOOK.md.
 
-Next engineering priority: a repeated, human-labeled local-model evidence/abstention suite plus resolution or isolation of the remaining ChromaDB advisories before using real company data; then choose one read-only connector with an explicit source contract.
+Next engineering priority: repeated human-labeled local-model evidence/abstention evaluation and one explicitly scoped read-only folder connector. Continue monitoring and resolving the four SDK-side ChromaDB advisories; the core is now separated and its frozen dependency audit is clean. Pilot provisioning and manual restore do not establish production operations, statistical model quality or hardware compatibility.

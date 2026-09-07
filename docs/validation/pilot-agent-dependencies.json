@@ -1,0 +1,1003 @@
+{
+  "recorded_at": "2026-09-07T05:46:42.125087+00:00",
+  "scope": "Frozen development environment including actual CrewAI SDK",
+  "command": "uv run pip-audit --local --skip-editable --format json",
+  "known_vulnerability_count": 4,
+  "dependencies": [
+    {
+      "name": "ai-office",
+      "skip_reason": "distribution marked as editable"
+    },
+    {
+      "name": "aiofiles",
+      "version": "24.1.0",
+      "vulns": []
+    },
+    {
+      "name": "aiohappyeyeballs",
+      "version": "2.7.1",
+      "vulns": []
+    },
+    {
+      "name": "aiohttp",
+      "version": "3.14.3",
+      "vulns": []
+    },
+    {
+      "name": "aiosignal",
+      "version": "1.4.0",
+      "vulns": []
+    },
+    {
+      "name": "aiosqlite",
+      "version": "0.21.0",
+      "vulns": []
+    },
+    {
+      "name": "alembic",
+      "version": "1.19.2",
+      "vulns": []
+    },
+    {
+      "name": "annotated-doc",
+      "version": "0.0.5",
+      "vulns": []
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "vulns": []
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.0",
+      "vulns": []
+    },
+    {
+      "name": "appdirs",
+      "version": "1.4.4",
+      "vulns": []
+    },
+    {
+      "name": "ast-serialize",
+      "version": "0.9.0",
+      "vulns": []
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0",
+      "vulns": []
+    },
+    {
+      "name": "backoff",
+      "version": "2.2.1",
+      "vulns": []
+    },
+    {
+      "name": "bcrypt",
+      "version": "5.0.0",
+      "vulns": []
+    },
+    {
+      "name": "boolean-py",
+      "version": "5.0",
+      "vulns": []
+    },
+    {
+      "name": "build",
+      "version": "1.6.0",
+      "vulns": []
+    },
+    {
+      "name": "cachecontrol",
+      "version": "0.14.4",
+      "vulns": []
+    },
+    {
+      "name": "cel-python",
+      "version": "0.5.0",
+      "vulns": []
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "vulns": []
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "vulns": []
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.1",
+      "vulns": []
+    },
+    {
+      "name": "chromadb",
+      "version": "1.1.1",
+      "vulns": [
+        {
+          "id": "PYSEC-2026-311",
+          "fix_versions": [],
+          "aliases": [
+            "GHSA-f4j7-r4q5-qw2c",
+            "CVE-2026-45829"
+          ]
+        },
+        {
+          "id": "GHSA-2wm9-hf6c-p5cr",
+          "fix_versions": [],
+          "aliases": [
+            "CVE-2026-45830"
+          ]
+        },
+        {
+          "id": "GHSA-36p7-vc44-83pf",
+          "fix_versions": [],
+          "aliases": [
+            "CVE-2026-45833"
+          ]
+        },
+        {
+          "id": "GHSA-xph7-9rjv-w5fr",
+          "fix_versions": [],
+          "aliases": [
+            "CVE-2026-45831"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "click",
+      "version": "8.5.0",
+      "vulns": []
+    },
+    {
+      "name": "coverage",
+      "version": "7.16.0",
+      "vulns": []
+    },
+    {
+      "name": "crewai",
+      "version": "1.15.20",
+      "vulns": []
+    },
+    {
+      "name": "crewai-cli",
+      "version": "1.15.20",
+      "vulns": []
+    },
+    {
+      "name": "crewai-core",
+      "version": "1.15.20",
+      "vulns": []
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.1",
+      "vulns": []
+    },
+    {
+      "name": "cyclonedx-python-lib",
+      "version": "9.1.0",
+      "vulns": []
+    },
+    {
+      "name": "defusedxml",
+      "version": "0.7.1",
+      "vulns": []
+    },
+    {
+      "name": "deprecation",
+      "version": "2.1.0",
+      "vulns": []
+    },
+    {
+      "name": "distro",
+      "version": "1.9.0",
+      "vulns": []
+    },
+    {
+      "name": "docstring-parser",
+      "version": "0.18.0",
+      "vulns": []
+    },
+    {
+      "name": "durationpy",
+      "version": "0.11",
+      "vulns": []
+    },
+    {
+      "name": "et-xmlfile",
+      "version": "2.0.0",
+      "vulns": []
+    },
+    {
+      "name": "fastapi",
+      "version": "0.141.1",
+      "vulns": []
+    },
+    {
+      "name": "filelock",
+      "version": "3.32.5",
+      "vulns": []
+    },
+    {
+      "name": "flatbuffers",
+      "version": "25.12.19",
+      "vulns": []
+    },
+    {
+      "name": "frozenlist",
+      "version": "1.8.0",
+      "vulns": []
+    },
+    {
+      "name": "fsspec",
+      "version": "2026.7.0",
+      "vulns": []
+    },
+    {
+      "name": "google-re2",
+      "version": "1.1.20251105",
+      "vulns": []
+    },
+    {
+      "name": "googleapis-common-protos",
+      "version": "1.75.0",
+      "vulns": []
+    },
+    {
+      "name": "greenlet",
+      "version": "3.5.5",
+      "vulns": []
+    },
+    {
+      "name": "grpcio",
+      "version": "1.83.1",
+      "vulns": []
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "vulns": []
+    },
+    {
+      "name": "h2",
+      "version": "4.4.1",
+      "vulns": []
+    },
+    {
+      "name": "hf-xet",
+      "version": "1.6.0",
+      "vulns": []
+    },
+    {
+      "name": "hpack",
+      "version": "4.2.0",
+      "vulns": []
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "vulns": []
+    },
+    {
+      "name": "httpcore2",
+      "version": "2.12.0",
+      "vulns": []
+    },
+    {
+      "name": "httptools",
+      "version": "0.8.0",
+      "vulns": []
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "vulns": []
+    },
+    {
+      "name": "httpx-sse",
+      "version": "0.4.3",
+      "vulns": []
+    },
+    {
+      "name": "httpx2",
+      "version": "2.12.0",
+      "vulns": []
+    },
+    {
+      "name": "huggingface-hub",
+      "version": "0.36.2",
+      "vulns": []
+    },
+    {
+      "name": "hyperframe",
+      "version": "6.1.0",
+      "vulns": []
+    },
+    {
+      "name": "idna",
+      "version": "3.19",
+      "vulns": []
+    },
+    {
+      "name": "importlib-resources",
+      "version": "7.1.0",
+      "vulns": []
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0",
+      "vulns": []
+    },
+    {
+      "name": "instructor",
+      "version": "1.16.0",
+      "vulns": []
+    },
+    {
+      "name": "jinja2",
+      "version": "3.1.6",
+      "vulns": []
+    },
+    {
+      "name": "jiter",
+      "version": "0.10.0",
+      "vulns": []
+    },
+    {
+      "name": "jmespath",
+      "version": "1.1.0",
+      "vulns": []
+    },
+    {
+      "name": "json-repair",
+      "version": "0.60.1",
+      "vulns": []
+    },
+    {
+      "name": "json5",
+      "version": "0.10.0",
+      "vulns": []
+    },
+    {
+      "name": "jsonpatch",
+      "version": "1.33",
+      "vulns": []
+    },
+    {
+      "name": "jsonpointer",
+      "version": "3.1.1",
+      "vulns": []
+    },
+    {
+      "name": "jsonref",
+      "version": "1.1.0",
+      "vulns": []
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0",
+      "vulns": []
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1",
+      "vulns": []
+    },
+    {
+      "name": "kubernetes",
+      "version": "36.0.3",
+      "vulns": []
+    },
+    {
+      "name": "lance-namespace",
+      "version": "0.12.0",
+      "vulns": []
+    },
+    {
+      "name": "lance-namespace-urllib3-client",
+      "version": "0.12.0",
+      "vulns": []
+    },
+    {
+      "name": "lancedb",
+      "version": "0.30.0",
+      "vulns": []
+    },
+    {
+      "name": "langchain-core",
+      "version": "1.6.2",
+      "vulns": []
+    },
+    {
+      "name": "langchain-ollama",
+      "version": "1.1.0",
+      "vulns": []
+    },
+    {
+      "name": "langchain-protocol",
+      "version": "0.0.19",
+      "vulns": []
+    },
+    {
+      "name": "langchain-qdrant",
+      "version": "1.1.0",
+      "vulns": []
+    },
+    {
+      "name": "langsmith",
+      "version": "0.12.1",
+      "vulns": []
+    },
+    {
+      "name": "lark",
+      "version": "1.3.1",
+      "vulns": []
+    },
+    {
+      "name": "librt",
+      "version": "0.15.0",
+      "vulns": []
+    },
+    {
+      "name": "license-expression",
+      "version": "30.4.4",
+      "vulns": []
+    },
+    {
+      "name": "linkify-it-py",
+      "version": "2.2.0",
+      "vulns": []
+    },
+    {
+      "name": "lxml",
+      "version": "6.1.3",
+      "vulns": []
+    },
+    {
+      "name": "mako",
+      "version": "1.4.1",
+      "vulns": []
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0",
+      "vulns": []
+    },
+    {
+      "name": "markupsafe",
+      "version": "3.0.3",
+      "vulns": []
+    },
+    {
+      "name": "mcp",
+      "version": "1.28.1",
+      "vulns": []
+    },
+    {
+      "name": "mdit-py-plugins",
+      "version": "0.6.1",
+      "vulns": []
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2",
+      "vulns": []
+    },
+    {
+      "name": "mmh3",
+      "version": "5.3.0",
+      "vulns": []
+    },
+    {
+      "name": "msgpack",
+      "version": "1.2.2",
+      "vulns": []
+    },
+    {
+      "name": "multidict",
+      "version": "6.7.1",
+      "vulns": []
+    },
+    {
+      "name": "mypy",
+      "version": "2.3.1",
+      "vulns": []
+    },
+    {
+      "name": "mypy-extensions",
+      "version": "1.1.0",
+      "vulns": []
+    },
+    {
+      "name": "numpy",
+      "version": "2.4.6",
+      "vulns": []
+    },
+    {
+      "name": "oauthlib",
+      "version": "3.3.1",
+      "vulns": []
+    },
+    {
+      "name": "ollama",
+      "version": "0.6.2",
+      "vulns": []
+    },
+    {
+      "name": "onnxruntime",
+      "version": "1.29.0",
+      "vulns": []
+    },
+    {
+      "name": "openai",
+      "version": "2.54.0",
+      "vulns": []
+    },
+    {
+      "name": "openpyxl",
+      "version": "3.1.5",
+      "vulns": []
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.42.1",
+      "vulns": []
+    },
+    {
+      "name": "opentelemetry-exporter-otlp-proto-common",
+      "version": "1.42.1",
+      "vulns": []
+    },
+    {
+      "name": "opentelemetry-exporter-otlp-proto-grpc",
+      "version": "1.42.1",
+      "vulns": []
+    },
+    {
+      "name": "opentelemetry-exporter-otlp-proto-http",
+      "version": "1.42.1",
+      "vulns": []
+    },
+    {
+      "name": "opentelemetry-proto",
+      "version": "1.42.1",
+      "vulns": []
+    },
+    {
+      "name": "opentelemetry-sdk",
+      "version": "1.42.1",
+      "vulns": []
+    },
+    {
+      "name": "opentelemetry-semantic-conventions",
+      "version": "0.63b1",
+      "vulns": []
+    },
+    {
+      "name": "orjson",
+      "version": "3.12.0",
+      "vulns": []
+    },
+    {
+      "name": "overrides",
+      "version": "7.7.0",
+      "vulns": []
+    },
+    {
+      "name": "packageurl-python",
+      "version": "0.17.6",
+      "vulns": []
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "vulns": []
+    },
+    {
+      "name": "pathspec",
+      "version": "1.1.1",
+      "vulns": []
+    },
+    {
+      "name": "pdfminer-six",
+      "version": "20260107",
+      "vulns": []
+    },
+    {
+      "name": "pdfplumber",
+      "version": "0.11.10",
+      "vulns": []
+    },
+    {
+      "name": "pendulum",
+      "version": "3.2.0",
+      "vulns": []
+    },
+    {
+      "name": "pillow",
+      "version": "12.3.0",
+      "vulns": []
+    },
+    {
+      "name": "pip",
+      "version": "26.2.1",
+      "vulns": []
+    },
+    {
+      "name": "pip-api",
+      "version": "0.0.34",
+      "vulns": []
+    },
+    {
+      "name": "pip-audit",
+      "version": "2.9.0",
+      "vulns": []
+    },
+    {
+      "name": "pip-requirements-parser",
+      "version": "32.0.1",
+      "vulns": []
+    },
+    {
+      "name": "platformdirs",
+      "version": "4.11.7",
+      "vulns": []
+    },
+    {
+      "name": "playwright",
+      "version": "1.62.0",
+      "vulns": []
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0",
+      "vulns": []
+    },
+    {
+      "name": "portalocker",
+      "version": "2.7.0",
+      "vulns": []
+    },
+    {
+      "name": "posthog",
+      "version": "5.4.0",
+      "vulns": []
+    },
+    {
+      "name": "propcache",
+      "version": "0.5.2",
+      "vulns": []
+    },
+    {
+      "name": "protobuf",
+      "version": "5.29.6",
+      "vulns": []
+    },
+    {
+      "name": "py-serializable",
+      "version": "2.1.0",
+      "vulns": []
+    },
+    {
+      "name": "pyarrow",
+      "version": "25.0.1",
+      "vulns": []
+    },
+    {
+      "name": "pybase64",
+      "version": "1.5.0",
+      "vulns": []
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0",
+      "vulns": []
+    },
+    {
+      "name": "pydantic",
+      "version": "2.11.10",
+      "vulns": []
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.33.2",
+      "vulns": []
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.15.0",
+      "vulns": []
+    },
+    {
+      "name": "pyee",
+      "version": "13.0.1",
+      "vulns": []
+    },
+    {
+      "name": "pygments",
+      "version": "2.21.0",
+      "vulns": []
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.13.0",
+      "vulns": []
+    },
+    {
+      "name": "pyparsing",
+      "version": "3.3.2",
+      "vulns": []
+    },
+    {
+      "name": "pypdf",
+      "version": "6.17.0",
+      "vulns": []
+    },
+    {
+      "name": "pypdfium2",
+      "version": "5.13.0",
+      "vulns": []
+    },
+    {
+      "name": "pypika",
+      "version": "0.51.1",
+      "vulns": []
+    },
+    {
+      "name": "pyproject-hooks",
+      "version": "1.2.0",
+      "vulns": []
+    },
+    {
+      "name": "pytest",
+      "version": "9.1.1",
+      "vulns": []
+    },
+    {
+      "name": "pytest-cov",
+      "version": "7.1.0",
+      "vulns": []
+    },
+    {
+      "name": "python-dateutil",
+      "version": "2.9.0.post0",
+      "vulns": []
+    },
+    {
+      "name": "python-docx",
+      "version": "1.2.0",
+      "vulns": []
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.3",
+      "vulns": []
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32",
+      "vulns": []
+    },
+    {
+      "name": "pyyaml",
+      "version": "6.0.3",
+      "vulns": []
+    },
+    {
+      "name": "qdrant-client",
+      "version": "1.16.2",
+      "vulns": []
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0",
+      "vulns": []
+    },
+    {
+      "name": "regex",
+      "version": "2026.1.15",
+      "vulns": []
+    },
+    {
+      "name": "reportlab",
+      "version": "4.5.1",
+      "vulns": []
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "vulns": []
+    },
+    {
+      "name": "requests-oauthlib",
+      "version": "2.0.0",
+      "vulns": []
+    },
+    {
+      "name": "requests-toolbelt",
+      "version": "1.0.0",
+      "vulns": []
+    },
+    {
+      "name": "rich",
+      "version": "14.3.4",
+      "vulns": []
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.6.3",
+      "vulns": []
+    },
+    {
+      "name": "ruff",
+      "version": "0.16.6",
+      "vulns": []
+    },
+    {
+      "name": "shellingham",
+      "version": "1.5.4",
+      "vulns": []
+    },
+    {
+      "name": "six",
+      "version": "1.17.0",
+      "vulns": []
+    },
+    {
+      "name": "sniffio",
+      "version": "1.3.1",
+      "vulns": []
+    },
+    {
+      "name": "sortedcontainers",
+      "version": "2.4.0",
+      "vulns": []
+    },
+    {
+      "name": "sqlalchemy",
+      "version": "2.0.52",
+      "vulns": []
+    },
+    {
+      "name": "sse-starlette",
+      "version": "3.4.10",
+      "vulns": []
+    },
+    {
+      "name": "starlette",
+      "version": "1.6.0",
+      "vulns": []
+    },
+    {
+      "name": "tenacity",
+      "version": "9.1.4",
+      "vulns": []
+    },
+    {
+      "name": "textual",
+      "version": "8.2.8",
+      "vulns": []
+    },
+    {
+      "name": "tokenizers",
+      "version": "0.23.2",
+      "vulns": []
+    },
+    {
+      "name": "toml",
+      "version": "0.10.2",
+      "vulns": []
+    },
+    {
+      "name": "tomli",
+      "version": "2.0.2",
+      "vulns": []
+    },
+    {
+      "name": "tomli-w",
+      "version": "1.1.0",
+      "vulns": []
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.0",
+      "vulns": []
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.4",
+      "vulns": []
+    },
+    {
+      "name": "typer",
+      "version": "0.27.2",
+      "vulns": []
+    },
+    {
+      "name": "types-pyyaml",
+      "version": "6.0.12.20260815",
+      "vulns": []
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "vulns": []
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "vulns": []
+    },
+    {
+      "name": "tzdata",
+      "version": "2026.3",
+      "vulns": []
+    },
+    {
+      "name": "urllib3",
+      "version": "2.7.0",
+      "vulns": []
+    },
+    {
+      "name": "uuid-utils",
+      "version": "0.17.0",
+      "vulns": []
+    },
+    {
+      "name": "uv",
+      "version": "0.11.33",
+      "vulns": []
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.52.4",
+      "vulns": []
+    },
+    {
+      "name": "uvloop",
+      "version": "0.22.1",
+      "vulns": []
+    },
+    {
+      "name": "watchfiles",
+      "version": "1.2.0",
+      "vulns": []
+    },
+    {
+      "name": "websocket-client",
+      "version": "1.9.2",
+      "vulns": []
+    },
+    {
+      "name": "websockets",
+      "version": "17.1",
+      "vulns": []
+    },
+    {
+      "name": "xxhash",
+      "version": "4.0.1",
+      "vulns": []
+    },
+    {
+      "name": "yarl",
+      "version": "1.24.5",
+      "vulns": []
+    },
+    {
+      "name": "zstandard",
+      "version": "0.25.0",
+      "vulns": []
+    }
+  ],
+  "scope_excludes": [
+    "OS/base image CVEs",
+    "model weights",
+    "hardware/firmware",
+    "penetration testing"
+  ]
+}

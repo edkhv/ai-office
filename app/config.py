@@ -10,17 +10,27 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="AI_OFFICE_", env_file=".env", extra="forbid")
     mode: Literal["demo", "local_ollama", "compatible_http"] = "demo"
+    data_mode: Literal["demo", "pilot"] = "demo"
     data_dir: Path = Path(".runtime/data")
     org_timezone: str = "Europe/Moscow"
     qdrant_url: str = "http://127.0.0.1:6333"
     ollama_base_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "qwen3:8b"
     ollama_embedding_model: str = "mxbai-embed-large"
+    agent_runtime_url: str = ""
     inference_base_url: str = ""
     inference_model: str = ""
     compatible_contract_verified: bool = False
     embedding_provider: Literal["demo", "ollama"] = "demo"
-    allowed_hosts: list[str] = ["127.0.0.1", "localhost", "::1", "qdrant", "host.docker.internal"]
+    allowed_hosts: list[str] = [
+        "127.0.0.1",
+        "localhost",
+        "::1",
+        "qdrant",
+        "host.docker.internal",
+        "agent-runtime",
+        "model-gateway",
+    ]
     cookie_secure: bool = False
     session_seconds: int = Field(default=28800, ge=60, le=86400)
     credential_days: int = Field(default=30, ge=1, le=365)
@@ -56,6 +66,8 @@ class Settings(BaseSettings):
             raise ValueError("Demo must not call model services")
         if self.mode != "demo" and self.embedding_provider == "demo":
             raise ValueError("Real generation requires explicitly selected real embeddings")
+        if self.agent_runtime_url:
+            self.check_url(self.agent_runtime_url)
         if self.mode == "compatible_http" and self.inference_base_url:
             self.check_url(self.inference_base_url)
         return self

@@ -4,6 +4,7 @@ x-office: &office
   build: .
   environment: &environment
     AI_OFFICE_MODE: demo
+    AI_OFFICE_DATA_MODE: demo
     AI_OFFICE_DATA_DIR: /data
     AI_OFFICE_QDRANT_URL: http://qdrant:6333
     OTEL_SDK_DISABLED: 'true'

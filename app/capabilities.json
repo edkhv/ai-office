@@ -1,5 +1,46 @@
 [
   {
+    "module": "Company pilot and user administration",
+    "implementation": "implemented",
+    "validation": "integration",
+    "mode": "pilot",
+    "test_refs": [
+      "tests/test_workspace.py",
+      "scripts/pilot_demo.py"
+    ],
+    "limitations": [
+      "One company per installation; fixed roles/teams; no SSO or multi-tenant service"
+    ],
+    "checked_at": "2026-09-07T05:49:26.666496+00:00"
+  },
+  {
+    "module": "Encrypted offline backup and restore",
+    "implementation": "implemented",
+    "validation": "integration",
+    "mode": "pilot",
+    "test_refs": [
+      "tests/unit/test_backup.py",
+      "scripts/pilot_lifecycle.py"
+    ],
+    "limitations": [
+      "Manual offline recovery to an empty target; 256 MiB archive limit; no scheduled off-site service or HA"
+    ],
+    "checked_at": "2026-09-07T05:49:26.666645+00:00"
+  },
+  {
+    "module": "Isolated CrewAI runtime",
+    "implementation": "implemented",
+    "validation": "local_llm",
+    "mode": "local_ollama",
+    "test_refs": [
+      "tests/security/test_agent_isolation.py"
+    ],
+    "limitations": [
+      "Core audit zero findings; four SDK-side ChromaDB advisories remain; fresh host and Docker model suites each 4/5 with planner review rejected; no statistical quality claim"
+    ],
+    "checked_at": "2026-09-07T05:49:26.666646+00:00"
+  },
+  {
     "module": "Chief of Staff",
     "implementation": "implemented",
     "validation": "integration",

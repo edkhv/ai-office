@@ -34,10 +34,12 @@ Task filters and the on-demand briefing accept the browser IANA timezone. Dates 
 
 ## Backups
 
-No production backup command is implemented. See continuity runbook for the planned encrypted, off-site approach. Never copy a live SQLite db file without its WAL consistency. No Docker volume deletion is needed for normal operation. Qdrant can be rebuilt from verified source versions, but SQL and source files need a consistent manifest.
+Manual encrypted offline backup/restore is implemented for the company pilot. Follow [the exact procedure](continuity/PILOT_BACKUP_RESTORE.md): stop app/worker, use the exclusive maintenance lease, preserve immutable source versions and SQL, then restore into an empty target and rebuild Qdrant. Scheduled/off-site production operations remain planned. Never copy a live SQLite db file without its WAL consistency. No Docker volume deletion is needed for normal operation.
 
 ## Development
 
 `uv sync --frozen --python 3.11`; `make lint`; `make test`; `make integration-test`; `make eval-demo`. `make smoke` and `make customer-demo` require the running Compose demo. The customer command checks upload → quote/export/approval → assigned task/deadline in a real browser; its report is `.runtime/customer-demo.json`. CI installs Chromium and runs the customer scenario after an app/worker restart. `make screenshots` uses Chrome on macOS if installed, otherwise Playwright Chromium: install it into this project with `PLAYWRIGHT_BROWSERS_PATH=.runtime/browsers uv run playwright install chromium`, and use the same environment when running screenshots. No frontend build or CDN is needed.
 
 Direct non-Docker app start after supplying a reachable Qdrant URL: `uv run python -m app.cli init`, then run `uv run python -m app.worker` in one terminal and `uv run uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8090 --no-access-log` in another. The supported clean-checkout demo command remains `make demo`.
+
+Company setup and employee administration: [PILOT_SETUP.md](PILOT_SETUP.md). `make pilot` uses a separate project at port 8091; `make pilot-setup-token` prints a private one-time initialization token only while setup is unfinished. Existing data cannot be switched between demo and pilot.
