@@ -5,12 +5,14 @@ import time
 from sqlalchemy import select
 
 from app.auth import issue_credential
+from app.backup import data_lease
 from app.config import Settings
 from app.db import engine_for, migrate, transaction
 from app.knowledge import Knowledge
 from app.providers import provider_for
-from app.schema_v1 import credentials, documents, versions
+from app.schema_v1 import actors, credentials, documents, sessions, versions
 from app.services import seed
+from app.workspace import initialize, setup_token
 
 
 def main():
@@ -18,16 +20,23 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("init")
     sub.add_parser("doctor")
+    sub.add_parser("setup-token")
     token = sub.add_parser("credential")
-    token.add_argument("actor", choices=["owner", "manager", "employee"])
+    token.add_argument("actor")
     revoke = sub.add_parser("revoke-credentials")
-    revoke.add_argument("actor", choices=["owner", "manager", "employee"])
+    revoke.add_argument("actor")
     sub.add_parser("reindex")
     args = parser.parse_args()
     s = Settings()
+    with data_lease(s):
+        execute(args, s)
+
+
+def execute(args, s):
     if args.command == "init":
         migrate(s)
         engine = engine_for(s)
+        initialize(engine, s, time.time())
         knowledge = Knowledge(engine, s)
         for attempt in range(20):
             try:
@@ -41,11 +50,16 @@ def main():
                 time.sleep(1)
         seed(engine, s, knowledge, time.time())
         print(
-            "Schema and synthetic fixtures initialized; existing data preserved. Credentials stored in private data volume."
+            "Pilot initialized without synthetic data. Retrieve the setup token locally with setup-token."
+            if s.data_mode == "pilot"
+            else "Schema and synthetic fixtures initialized; existing data preserved. Credentials stored in private data volume."
         )
+    elif args.command == "setup-token":
+        print(setup_token(engine_for(s), s))
     elif args.command == "doctor":
         checks = {
             "mode": s.mode,
+            "data_mode": s.data_mode,
             "provider": provider_for(s).health(),
             "hardware": "hardware_validation_pending",
         }
@@ -67,6 +81,7 @@ def main():
                 .where(credentials.c.actor_id == args.actor)
                 .values(revoked=True)
             )
+            conn.execute(sessions.delete().where(sessions.c.actor_id == args.actor))
         print("All actor credentials and associated sessions revoked.")
     elif args.command == "reindex":
         # Explicitly rebuild the active model's collection from immutable current sources.
@@ -77,7 +92,15 @@ def main():
         k = Knowledge(engine, s)
         k.ensure_store()
         with engine.connect() as conn:
-            actor = get_actor(conn, "owner")
+            owner_id = conn.execute(
+                select(actors.c.id)
+                .where(actors.c.active.is_(True), actors.c.role == "owner")
+                .order_by(actors.c.id)
+                .limit(1)
+            ).scalar()
+            if owner_id is None:
+                raise SystemExit("Initialize the workspace owner before reindexing.")
+            actor = get_actor(conn, owner_id)
             docs = rows(conn, select(documents).where(documents.c.revoked.is_(False)))
         for doc in docs:
             source = k.get_document(actor, doc["id"], doc["current_version"])

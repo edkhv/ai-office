@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "PDF/DOCX upload, page citation and highlighted source",
+    "CSV catalog, document suggestion, edited quote, immutable revisions, formula and draft/approved exports",
+    "Approved personal assignment, exact task link, overdue/blocked filters and current briefing",
+    "Russian/English and mobile layout"
+  ],
+  "browser_errors": [],
+  "external_requests": [],
+  "screenshots": 5,
+  "data": "explicitly synthetic customer examples"
+}

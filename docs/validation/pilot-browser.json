@@ -1,0 +1,12 @@
+{
+  "synthetic_test_data": true,
+  "base": "http://127.0.0.1:8092",
+  "checks": [
+    "Private one-time setup; company branding; empty financial facts; no demo instruction",
+    "Two named employees; owner-only management; disabling immediately revokes credential",
+    "Own imported document and catalog; checked quote approval; named overdue task and briefing"
+  ],
+  "browser_errors": [],
+  "external_requests": [],
+  "passed": true
+}

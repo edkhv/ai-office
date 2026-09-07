@@ -1,0 +1,12 @@
+# Separate project and volumes: docker compose -p ai-office-pilot -f compose.yaml -f compose.pilot.yaml up -d --build --wait
+name: ai-office-pilot
+x-pilot: &pilot
+  AI_OFFICE_DATA_MODE: pilot
+services:
+  init:
+    environment: *pilot
+  app:
+    environment: *pilot
+    ports: !override ['127.0.0.1:${AI_OFFICE_PILOT_PORT:-8091}:8000']
+  worker:
+    environment: *pilot

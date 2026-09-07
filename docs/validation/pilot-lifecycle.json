@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "data": "synthetic test files in isolated pilot workspaces",
+  "checks": [
+    "clean company setup and two employees, no demo documents/tasks",
+    "DOCX/PDF, catalog, approved quote, assigned task and durable document answer",
+    "backup refused while app/worker hold shared leases",
+    "authenticated encrypted backup restored into new database and real Qdrant",
+    "old owner/employee tokens rejected; new recovery token and completed setup preserved",
+    "users, document IDs/bytes, quote snapshot/PDF, task/assignee preserved; recovered search/worker work"
+  ],
+  "backup_bytes": 312954,
+  "documents": 2,
+  "users": 3,
+  "tasks": 1
+}

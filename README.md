@@ -16,7 +16,7 @@ AI Office is an early-stage, local-first business assistant platform for small a
 - **Control:** owner/manager/employee scopes, local credentials, protected sessions, audit, on-demand briefing, English/Russian dashboard and visible dependency/hardware status.
 - **Providers:** deterministic demo, actual CrewAI Planner/Reviewer over Ollama, separately configurable Ollama embeddings, and a tested compatible HTTP contract.
 
-Demo SQL, worker, Qdrant, file storage, task updates and calculations are real. Model responses are **deterministic fixtures**, and embeddings are labeled lexical/hash-based. Demo supports the supplied procurement example; unsupported instructions or missing team/deadline fields ask for clarification. The seeded company and financial ledger remain synthetic in every profile. Uploaded documents/catalogs and stored tasks are user data; the app does not relabel them as an accounting integration. Quote suggestions in demo match explicit `SKU × quantity` text and require human review.
+Demo SQL, worker, Qdrant, file storage, task updates and calculations are real. Model responses are **deterministic fixtures**, and embeddings are labeled lexical/hash-based. Demo supports the supplied procurement example; unsupported instructions or missing team/deadline fields ask for clarification. The separate demo data mode seeds a synthetic company and ledger; pilot data mode starts empty and shows financial metrics as unavailable. Uploaded documents/catalogs and stored tasks are user data; the app does not relabel them as an accounting integration. Quote suggestions in demo match explicit `SKU × quantity` text and require human review.
 
 ## Run the demo
 
@@ -40,11 +40,20 @@ docker compose exec app python -m app.cli credential owner
 
 Initial setup downloads packages/images. After preparation, demo requires no paid API, GPU, Ollama, Local AI Station or remote assets. Only the application is published to loopback; Qdrant and SQLite are not exposed. [Operations and credentials](docs/OPERATIONS.md).
 
+## Run a company pilot
+
+```bash
+make pilot
+make pilot-setup-token
+```
+
+Open **http://127.0.0.1:8091**, enter the private setup token and create your company and owner account. Save the owner's access token shown once. **People and access** lets owners add employees, manage roles and disable or rotate access. Pilot volumes are separate from demo; no synthetic financial records are inserted. Documents, catalogs, quote approval and assigned tasks work without a model in deterministic test mode. [Setup and limits](docs/PILOT_SETUP.md) · [Encrypted backup and restore](docs/continuity/PILOT_BACKUP_RESTORE.md).
+
 ## Architecture and models
 
 Python 3.11 · FastAPI/Pydantic · SQLAlchemy/Alembic/SQLite WAL · CrewAI · Ollama · LangChain/Qdrant · Jinja2 + local JavaScript/CSS · Docker Compose · pytest.
 
-One API and one separate worker share the application image. Models propose data; SQL controls authorization, durable approval and local execution. Generation and embeddings are selected independently. A provider failure is visible; there is no implicit cloud or demo fallback. [Architecture](docs/ARCHITECTURE.md) · [Model configuration](docs/model-providers.md).
+One API and one separate worker share the core application image. Local generation uses a separate CrewAI runtime and restricted model gateway; the runtime has no business-data volume or unrestricted Docker network. Models propose data; SQL controls authorization, durable approval and local execution. Generation and embeddings are selected independently. A provider failure is visible; there is no implicit cloud or demo fallback. [Architecture](docs/ARCHITECTURE.md) · [Model configuration](docs/model-providers.md).
 
 The project continues [AI Docs Assistant](https://github.com/edkhv/ai-docs-assistant) at `d24f1e9`; the original repository was not modified. [Baseline review and dependency changes](docs/BASELINE_REVIEW.md).
 
@@ -63,11 +72,11 @@ make screenshots  # real browser walkthrough
 
 The validated results and limitations are in [VALIDATION.md](docs/VALIDATION.md) and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md). Capability implementation and validation are separate; local model tests do not validate hardware. [Capability matrix](docs/CAPABILITY_MATRIX.md).
 
-The dependency audit still reports four advisories in transitive ChromaDB, which CrewAI pins and this application does not use as storage. See [dependency review](docs/DEPENDENCY_REVIEW.md). This is not a production security claim.
+The frozen core installation audit reports zero advisories and excludes CrewAI/ChromaDB. Four ChromaDB advisories remain in the optional isolated CrewAI SDK runtime; isolation is a mitigation, not a fix. See [dependency review](docs/DEPENDENCY_REVIEW.md). This is not a production security claim.
 
 ## Boundaries and next steps
 
-No supplier email is sent. OCR/scans, mail and CRM connectors, broader Office Manager workflows, meetings, Investor Room, scheduled notifications, encrypted backup and the remaining workforce modules are **planned**, not implemented. PDF/DOCX extraction, catalog-based quotations and assigned task tracking are implemented; they do not make this a production customer installation. [Roadmap](docs/ROADMAP.md) · [Threat model](docs/THREAT_MODEL.md) · [Continuity design](docs/continuity/RUNBOOK.md).
+No supplier email is sent. OCR/scans, mail and CRM connectors, broader Office Manager workflows, meetings, Investor Room, scheduled notifications, scheduled/off-site backup operations and the remaining workforce modules are **planned**, not implemented. PDF/DOCX extraction, catalog-based quotations and assigned task tracking are implemented; they do not make this a production customer installation. [Roadmap](docs/ROADMAP.md) · [Threat model](docs/THREAT_MODEL.md) · [Continuity design](docs/continuity/RUNBOOK.md).
 
 For hardware suppliers and integrators: [partner discussion brief](docs/PARTNER_OVERVIEW.md), [hardware validation gates](docs/hardware/LOCAL_AI_STATION_VALIDATION.md), architecture, walkthrough and [actual screenshots](docs/assets). No purchase, partnership, driver installation, device compatibility, throughput or customer deployment is claimed.
 

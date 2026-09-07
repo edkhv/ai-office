@@ -15,8 +15,39 @@ The original CrewAI 1.7.2 dependency graph produced **20 advisory findings acros
 
 CrewAI constrains ChromaDB to `~=1.1.0`. AI Office uses Qdrant for retrieval and SQLite for state; CrewAI memory, tools, automatic knowledge and replay content persistence are disabled. This reduces exposure to those ChromaDB features but does not prove the advisories irrelevant or resolved. No unsupported transitive dependency override was forced simply to get a clean audit. “No fix reported” is the scanner result, not a universal assertion about every future release.
 
-**The dependency audit is not clean.** Before using real company data, update/isolate the constrained dependency with validated compatibility or obtain a documented upstream resolution. Dependency audit is recorded separately from functional CI; no ignored advisory is represented as a pass. Re-run the exact audit on the installed frozen environment as advisories evolve.
+The pilot review checked the live [CrewAI PyPI metadata](https://pypi.org/pypi/crewai/json): 1.15.20 remains the latest release and still declares `chromadb~=1.1.0`. [ChromaDB PyPI metadata](https://pypi.org/pypi/chromadb/json) reports 1.5.9 as latest; it is outside that supported constraint and is also listed as affected by the [pre-authentication code-injection advisory](https://github.com/advisories/GHSA-f4j7-r4q5-qw2c). The other findings concern [cross-tenant collection access](https://github.com/advisories/GHSA-2wm9-hf6c-p5cr), [collection-update code injection](https://github.com/advisories/GHSA-36p7-vc44-83pf), and [SimpleRBAC scope checks](https://github.com/advisories/GHSA-xph7-9rjv-w5fr). These are Chroma server/API features; AI Office does not start a Chroma server or expose those endpoints. This is an exposure assessment, not an upstream fix or a clean full-SDK audit.
+
+Cryptography 50.0.1, already present in the frozen development graph, is now a direct dependency for encrypted backups. Its version was checked against [PyPI metadata](https://pypi.org/pypi/cryptography/json); the refreshed installed-environment audit reports no finding for that package.
+
+## Pilot deployment boundary
+
+The default production install (`uv sync --frozen --no-dev`) no longer installs CrewAI or ChromaDB. CrewAI 1.15.20 remains available through the `agents` extra and the development group. A newly created frozen core environment contained 69 packages; `pip-audit --path` reported **zero known vulnerabilities**. Import checks confirmed that both the business API and model gateway load without either SDK package.
+
+The separate agent image uses `Dockerfile.agent-runtime` and `--extra agents`. It exposes only an internal `/step` data endpoint and `/health`, and retains the actual CrewAI planner/reviewer behavior. The runtime receives the authorized text needed for a step, not organization credentials, document paths or business database access. Its SDK storage is under `/tmp/ai-office-agents`; it has no business data mount. The pilot's real-model provider fails closed if the runtime URL is missing, rather than importing the SDK into the business worker.
+
+The Compose deployment separates the runtime from Qdrant and general egress. Its model calls pass through a core-only gateway with fixed Ollama/compatible HTTP routes and configured model IDs. The gateway rejects arbitrary destinations, model downloads, tools, redirects and streaming; it bounds request/response sizes, generation budgets and embedding batch sizes. Runtime/gateway ports are not published. This deployment boundary does not certify arbitrary alternative deployments or make the SDK advisory findings disappear. The agent necessarily sees authorized prompt content and model output in memory; container isolation is not a full sandbox/security audit.
+
+| Audited environment | Result |
+|---|---|
+| Fresh frozen core, `--no-dev`, no extras | 69 packages; zero known vulnerabilities; CrewAI/ChromaDB absent |
+| Frozen development/agent SDK graph | Four ChromaDB findings remain, listed above |
+
+Reproduce independently without removing the development environment:
+
+```sh
+UV_PROJECT_ENVIRONMENT=.runtime/core-audit-env uv sync --frozen --no-dev --python 3.11
+uv run pip-audit --path .runtime/core-audit-env/lib/python3.11/site-packages --skip-editable --format json
+uv run pip-audit --local --skip-editable --format json
+```
+
+The last command still returns a nonzero exit code for the four SDK findings. No advisory is ignored and no forced incompatible Chroma upgrade is used. Re-run both audits as the package index and advisory database evolve. A clean core result is not a clean full-SDK or full-system security result.
+
+Checked reports: [core package audit](validation/pilot-core-dependencies.json), [SDK package audit](validation/pilot-agent-dependencies.json), and [observed Docker boundary](validation/pilot-inference-container-boundary.json). The actual core Docker image imported the business API without CrewAI or ChromaDB. Runtime socket checks reached the gateway but could not reach Qdrant or an external test address; inspection confirmed no business mounts or published ports, an internal-only network, read-only root, temporary SDK storage and non-root execution.
+
+The opt-in `scripts/isolated_llm.py` check uses synthetic text and refuses to run its client when CrewAI/ChromaDB are installed. [Host-process RPC](validation/pilot-isolated-llm-host.json) and [Docker RPC](validation/pilot-isolated-llm-docker.json) each passed runtime health, grounded answering, exact SKU/quantity extraction and real embeddings (two 4096-dimensional vectors). The planner/reviewer check failed closed with `REVIEW_REJECTED`; the recorded Docker repeat received the exact verdict `invalid`, not an HTTP/schema error. This result is retained rather than weakening approval checks or claiming a successful general planning-quality evaluation. The check exits nonzero when any scenario fails. It does not run by default in CI and does not download model weights.
+
+For the Docker local profile with qwen3.5:9b and qwen3-embedding already installed, start only `model-gateway` and `agent-runtime` under a separate Compose project, then run the script in the core image on that project's internal inference network. The script prints safe result metadata and writes `--output`; retain stdout when using an ephemeral tmpfs, because its contents disappear when the container exits. These measurements concern the current host and Docker software, not the target AI station.
 
 Direct LiteLLM was removed because our custom CrewAI BaseLLM adapter uses explicit HTTPX local transport; implicit SDK model routing is unnecessary. Qdrant server/client versions remain fixed at 1.16.2. SDK telemetry/tracing settings and source-level behavior were inspected, and actual mocked CrewAI steps ran under blocked sockets. Local model socket checks observed loopback connections only. These do not certify arbitrary deployment egress.
 
-This audit covers Python packages installed in the development environment, not host firmware, OS vulnerability scanning, model weights, Docker base-image CVEs or vendor drivers.
+These audits cover Python packages in the stated core and development environments, not host firmware, OS vulnerability scanning, model weights, Docker base-image CVEs or vendor drivers.

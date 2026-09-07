@@ -1,0 +1,12 @@
+{
+  "recorded_at": "2026-09-07T05:55:13.948591+00:00",
+  "tests": 202,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "coverage_percent": 84,
+  "integration_checks_passed": 3,
+  "demo_eval_cases_passed": 4,
+  "lint": "passed",
+  "scope": "unit/security; real Qdrant integration and deterministic demo evals reported separately"
+}

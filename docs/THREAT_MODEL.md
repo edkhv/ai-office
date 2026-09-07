@@ -17,8 +17,16 @@ Assets: source documents and originals, catalogs, quotes/exports, credentials, p
 | Network redirection | Admin host allowlist, no credentials in URL, HTTP redirects disabled, trust_env=False | Hostname resolution is not pinned; an allowlist is not a firewall |
 | XSS / CSRF | textContent/plain text rendering, CSP, HttpOnly/SameSite cookies, CSRF header check | Local HTTP exception for demo; HTTPS is required remotely |
 | Dependency compromise | Lockfile, current audit and known-findings disclosure | See DEPENDENCY_REVIEW; no supply-chain certification |
-| SQLite/worker crash | WAL, short writes, leases/fencing, idempotent local commits | One-node availability; no HA or production backup |
+| SQLite/worker crash | WAL, short writes, leases/fencing, idempotent local commits | One-node availability; manual encrypted offline restore is tested; no HA or scheduled off-site operations |
 | Upload/resource abuse | Separate bounded text/binary bodies; PDF/DOCX child process with time/CPU/output limits and Linux memory cap; ZIP/XML guards; bounded catalog rows and queue | Process isolation is not an OS sandbox; macOS has no address-space cap here; production rate/load testing remains pending |
 | Spreadsheet formula / XML abuse | Catalogs reject formula cells, limit ZIP expansion and accept one sheet; document XML rejects DTD/entities; parsers do not execute macros or follow links | Complex spreadsheets/layouts and OCR are outside this release |
 
 Audit is append-only through API. SQLite administrators can edit it; no cryptographic immutability is claimed. Scope tests cover owner, manager and employee. Investor is not an alias for owner and has no implemented access route.
+
+## Company pilot additions
+
+Private one-time setup prevents public bootstrap takeover; setup completion and owner creation share one transaction. Owner account management uses fresh SQL role and organization checks, protects the last active owner and revokes sessions/credentials on access changes. Persisted demo/pilot mode rejects accidental data-volume mixing.
+
+The optional CrewAI runtime has no business-data mount and only an internal inference network; the gateway allows bounded model requests rather than arbitrary forwarding. Four SDK-side ChromaDB findings remain. Core dependency findings are separately audited; isolation is not a vulnerability fix or a full OS-hardening audit.
+
+Offline recovery uses authenticated encryption and exclusive data-directory leases, verifies immutable file manifests, refuses occupied destinations, and invalidates old credentials. Passphrase loss, unprotected exported copies, manual-operation error and unmeasured repeated RPO/RTO remain operational risks. See the [backup procedure](continuity/PILOT_BACKUP_RESTORE.md).

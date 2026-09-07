@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Literal
 from urllib.parse import quote
@@ -14,6 +15,7 @@ from sqlalchemy import select
 from starlette.exceptions import HTTPException
 
 from app import auth, services
+from app.backup import data_lease
 from app.config import Settings
 from app.contracts import Clarification, Command, Decision, DocumentACL, Login, TaskUpdate
 from app.contracts import Query as SearchQuery
@@ -23,6 +25,8 @@ from app.knowledge import Knowledge
 from app.providers import provider_for
 from app.schema_v1 import audit, heartbeats, runs, sessions
 from app.workflows import Workflows, allowable_assignees, task_counts, task_list, update_task
+from app.workspace import validate_mode
+from app.workspace_routes import make_workspace_router
 
 
 def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=time.time):
@@ -31,8 +35,20 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
     provider = provider or provider_for(settings)
     knowledge = knowledge or Knowledge(engine, settings, clock=clock)
     workflows = Workflows(engine, settings, provider, knowledge, clock)
+
+    @asynccontextmanager
+    async def lifespan(app):
+        with data_lease(settings):
+            validate_mode(engine, settings)
+            yield
+
     app = FastAPI(
-        title="AI Office", version="0.1.0-alpha", docs_url=None, redoc_url=None, openapi_url=None
+        lifespan=lifespan,
+        title="AI Office",
+        version="0.1.0-alpha",
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
     )
     app.state.engine, app.state.settings = engine, settings
     app.state.workflows, app.state.knowledge = workflows, knowledge
@@ -227,7 +243,8 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
             "mode": settings.mode,
             "engine": provider.engine,
             "model_id": provider.model_id,
-            "synthetic_data": True,
+            "synthetic_data": settings.data_mode == "demo",
+            "data_mode": settings.data_mode,
             "provider_status": provider.health(),
             "checks": checks(),
             "hardware": {
@@ -240,14 +257,21 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
             "external_actions": "not_implemented",
             "capabilities": entries,
             "embedding_mode": settings.embedding_provider,
-            "warning": "Lexical/hash embeddings and deterministic fixture responses"
-            if settings.mode == "demo"
-            else "Local model output requires verification; synthetic business records",
+            "warning": (
+                "Deterministic test mode with lexical/hash retrieval; company data, no synthetic finances"
+                if settings.data_mode == "pilot" and settings.mode == "demo"
+                else "Local model output requires verification; company data, no accounting connector"
+                if settings.data_mode == "pilot"
+                else "Lexical/hash embeddings and deterministic fixture responses"
+                if settings.mode == "demo"
+                else "Local model output requires verification; synthetic business records"
+            ),
         }
 
     from app.quote_routes import make_quote_router
 
     app.include_router(make_quote_router(actor, workflows))
+    app.include_router(make_workspace_router(actor, engine, settings, clock))
 
     @app.post("/api/v1/commands", status_code=202)
     def command(

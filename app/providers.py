@@ -50,10 +50,21 @@ class DemoProvider:
     engine = "deterministic_demo"
     model_id = None
 
+    def __init__(self, pilot=False):
+        self.pilot = pilot
+
     def health(self):
         return "ready"
 
     def plan(self, command, source_ref):
+        if self.pilot:
+            return TaskPlan(
+                source_ref=source_ref,
+                missing_fields=[
+                    "Free-form planning requires a configured local model. Use explicit quote lines and an approved follow-up task in deterministic pilot mode. / Для свободного поручения подключите локальную модель. В детерминированном пилоте укажите позиции КП и согласуйте связанное поручение."
+                ],
+                warnings=["Deterministic pilot; no model response or synthetic company scenario."],
+            )
         missing = []
         if not command.team_id:
             missing.append("Which team is responsible? / Какой отдел отвечает?")
@@ -231,6 +242,18 @@ class CrewProvider:
         self.transport = LocalTransport(settings, transport)
 
     def health(self):
+        if getattr(self.settings, "agent_runtime_url", ""):
+            try:
+                data = self.runtime_request("GET", "/health")
+                return (
+                    "ready"
+                    if data.get("status") == "ready" and data.get("model_id") == self.model_id
+                    else "degraded"
+                )
+            except DomainError:
+                return "degraded"
+        if getattr(self.settings, "data_mode", "demo") == "pilot":
+            return "not_configured"
         try:
             path = "/api/tags" if self.settings.mode == "local_ollama" else "/models"
             data = self.transport.request("GET", path)
@@ -248,6 +271,47 @@ class CrewProvider:
             return "not_configured" if exc.code == "NOT_CONFIGURED" else "degraded"
 
     def crew_step(self, role, instruction):
+        if getattr(self.settings, "agent_runtime_url", ""):
+            data = self.runtime_request("POST", "/step", {"role": role, "instruction": instruction})
+            if data.get("model_id") != self.model_id or not isinstance(data.get("output"), str):
+                raise DomainError("AGENT_RUNTIME_SCHEMA_ERROR", 503)
+            return data["output"]
+        if getattr(self.settings, "data_mode", "demo") == "pilot":
+            raise DomainError("AGENT_RUNTIME_REQUIRED", 503)
+        return self._sdk_step(role, instruction)
+
+    def runtime_request(self, method, path, payload=None):
+        base = self.settings.check_url(self.settings.agent_runtime_url)
+        encoded = json.dumps(payload).encode() if payload is not None else None
+        if encoded and len(encoded) > 65536:
+            raise DomainError("AGENT_REQUEST_TOO_LARGE", 422)
+        try:
+            with httpx.Client(
+                timeout=125,
+                follow_redirects=False,
+                trust_env=False,
+                transport=self.transport.transport,
+            ) as client:
+                with client.stream(
+                    method,
+                    base + path,
+                    content=encoded,
+                    headers={"content-type": "application/json"},
+                ) as response:
+                    response.raise_for_status()
+                    content = bytearray()
+                    for chunk in response.iter_bytes():
+                        content.extend(chunk)
+                        if len(content) > 262144:
+                            raise DomainError("AGENT_RESPONSE_TOO_LARGE", 503)
+                    data = json.loads(content)
+                    if not isinstance(data, dict):
+                        raise ValueError("Invalid runtime response")
+                    return data
+        except (httpx.HTTPError, ValueError) as exc:
+            raise DomainError("AGENT_RUNTIME_UNAVAILABLE", 503, retryable=True) from exc
+
+    def _sdk_step(self, role, instruction):
         # Set before importing SDKs. No user settings or global tracing configuration modified.
         os.environ["OTEL_SDK_DISABLED"] = "true"
         os.environ["CREWAI_DISABLE_TELEMETRY"] = "true"
@@ -258,10 +322,13 @@ class CrewProvider:
         storage.mkdir(parents=True, exist_ok=True, mode=0o700)
         consent = storage / ".crewai_user.json"
         if not consent.exists():
-            from app.auth import write_private
-
-            write_private(consent, '{"first_execution_done":true,"trace_consent":false}')
-        from crewai import Agent, BaseLLM, Crew, Task
+            descriptor = os.open(consent, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "w") as output:
+                output.write('{"first_execution_done":true,"trace_consent":false}')
+        try:
+            from crewai import Agent, BaseLLM, Crew, Task
+        except ImportError as exc:
+            raise DomainError("AGENT_SDK_NOT_INSTALLED", 503) from exc
 
         transport = self.transport
 
@@ -278,6 +345,10 @@ class CrewProvider:
                     raise DomainError("MODEL_CALL_BUDGET", 503)
                 if isinstance(messages, str):
                     messages = [{"role": "user", "content": messages}]
+                # CrewAI adds cache_breakpoint metadata; our local contract is text-only.
+                messages = [
+                    {"role": message["role"], "content": message["content"]} for message in messages
+                ]
                 raw = transport.generate(messages)
                 return raw if re.search(r"(^|\n)Final Answer:", raw) else "Final Answer: " + raw
 
@@ -419,4 +490,8 @@ class CrewProvider:
 
 
 def provider_for(settings):
-    return DemoProvider() if settings.mode == "demo" else CrewProvider(settings)
+    return (
+        DemoProvider(pilot=getattr(settings, "data_mode", "demo") == "pilot")
+        if settings.mode == "demo"
+        else CrewProvider(settings)
+    )

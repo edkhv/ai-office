@@ -9,8 +9,9 @@ flowchart TD
     AUTH --> WF[Durable workflows and proposals]
     WF --> DB[(SQLite WAL / Alembic)]
     WORKER[Single worker / leases and fencing] --> DB
-    WORKER --> PLAN[CrewAI Planner → schema and policy → Reviewer]
-    PLAN --> LOCAL[Explicit Ollama or compatible HTTP]
+    WORKER --> PLAN[Isolated CrewAI runtime: Planner / Reviewer]
+    PLAN --> GATE[Restricted model gateway]
+    GATE --> LOCAL[Explicit Ollama or compatible HTTP]
     PLAN --> WF
     WF --> APPROVE[Human approves exact hash and version]
     APPROVE --> EXEC[Revalidate actor and approval]
@@ -41,6 +42,10 @@ Catalogs and quote snapshots live in supplementary tables introduced after the f
 
 Quote suggestions use durable worker jobs and schema/SKU validation. A reviewed quote is proposed without a model call; its approval goes through the existing author-only hash/version/expiry gate and durable execution job. Quote approval status, assigned task, run completion and audit commit together. Revising an already executed quote creates a new draft and does not erase the earlier task.
 
-Demo worker/Qdrant use an internal Docker network. API also has a web ingress network so Docker Desktop can publish its loopback port. This means API network configuration is not an egress firewall. Demo code does not load model adapters or request external services; tests enforce socket denial, and the browser uses no external assets. Real Ollama profile opens the application network to the explicitly configured local host service.
+Demo worker/Qdrant use an internal Docker network. API also has a web ingress network so Docker Desktop can publish its loopback port. This means API network configuration is not an egress firewall. Demo code does not load model adapters or request external services; tests enforce socket denial, and the browser uses no external assets. The local-model overlay places the CrewAI runtime only on an internal inference network, without business volumes. A separate restricted gateway has model egress; it exposes selected generation/embedding routes, not model administration or arbitrary URL forwarding. The core image excludes CrewAI and ChromaDB.
 
 SQLite WAL is for a single local disk and one worker. Long model requests run in the worker, not the event loop. Health reflects schema, Qdrant, worker heartbeat and provider availability. No Redis, Celery, Kubernetes, HA or PostgreSQL support is claimed.
+
+Company data mode (`demo` or `pilot`) is persisted independently of inference mode. Migration 0005 preserves existing demo databases; a fresh pilot creates only pending workspace metadata and a private setup-token hash. Atomic setup consumes that token, creates the owner and closes setup permanently. User display names live in supplementary metadata; account changes use fresh SQL owner authorization, revoke sessions/credentials on access changes, and preserve one active owner. The API and worker validate the persisted data mode at startup.
+
+App/worker lifetimes and CLI writers hold a shared data-directory maintenance lease. Offline backup/restore requires the exclusive lease. The encrypted archive preserves authoritative SQL and immutable source files; restore rebuilds Qdrant rather than copying derived vector storage, revokes credentials/sessions and issues a private recovery credential. See the continuity runbook for limits and the required empty destination.
