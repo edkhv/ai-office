@@ -19,6 +19,7 @@ from app.backup import data_lease
 from app.config import Settings
 from app.contracts import Clarification, Command, Decision, DocumentACL, Login, TaskUpdate
 from app.contracts import Query as SearchQuery
+from app.council import CouncilRequest, registry
 from app.db import engine_for, row, rows, transaction, uid
 from app.errors import DomainError
 from app.knowledge import Knowledge
@@ -433,6 +434,24 @@ def create_app(settings=None, engine=None, provider=None, knowledge=None, clock=
     def search(body: SearchQuery, who=Depends(actor)):
         evidence = knowledge.search(who, body.query)
         return {"status": "found" if evidence else "insufficient_evidence", "evidence": evidence}
+
+    @app.get("/api/v1/council/roles")
+    def council_roles(who=Depends(actor)):
+        auth.require(who, "owner", "manager")
+        return registry()
+
+    @app.post("/api/v1/council", status_code=202)
+    def council(
+        body: CouncilRequest, request: Request, idempotency_key: str = Header(), who=Depends(actor)
+    ):
+        run = workflows.submit(
+            who, body.model_dump(), idempotency_key, request.state.request_id, "council"
+        )
+        return {
+            "run_id": run["id"],
+            "status": run["state"],
+            "status_url": f"/api/v1/runs/{run['id']}",
+        }
 
     @app.post("/api/v1/knowledge/ask", status_code=202)
     def ask(

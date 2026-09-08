@@ -53,6 +53,7 @@ jobs:
       - run: docker compose up -d --wait --wait-timeout 120
       - run: make smoke
       - run: make customer-demo
+      - run: uv run --frozen python scripts/council_demo.py
       - run: docker compose down
         if: always()
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -63,6 +64,8 @@ jobs:
             .runtime/smoke.json
             .runtime/customer-demo.json
             docs/assets/customer-*.png
+            docs/assets/council-*.png
+            docs/validation/council-browser.json
 
   pilot-recovery:
     runs-on: ubuntu-latest

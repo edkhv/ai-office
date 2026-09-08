@@ -1,0 +1,45 @@
+{
+  "checked_at": "2026-09-08T13:15:33.890066+00:00",
+  "synthetic_inputs": true,
+  "model": "qwen3.5:9b",
+  "statistical_quality": "not_measured",
+  "device_validation": "not_run",
+  "checks": [
+    {
+      "stage": "strategy",
+      "passed": true,
+      "source_ids": [
+        "synthetic-pilot"
+      ],
+      "missing_data_count": 3,
+      "seconds": 32.45
+    },
+    {
+      "stage": "finance",
+      "passed": true,
+      "source_ids": [
+        "synthetic-pilot"
+      ],
+      "missing_data_count": 4,
+      "seconds": 19.53
+    },
+    {
+      "stage": "critic",
+      "passed": true,
+      "source_ids": [
+        "synthetic-pilot"
+      ],
+      "missing_data_count": 3,
+      "seconds": 17.19
+    },
+    {
+      "stage": "synthesis",
+      "passed": true,
+      "recommendation": "needs_data",
+      "source_ids": [
+        "synthetic-pilot"
+      ],
+      "seconds": 36.35
+    }
+  ]
+}

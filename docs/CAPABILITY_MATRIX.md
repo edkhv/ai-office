@@ -4,6 +4,7 @@ Implementation, validation, runtime mode and hardware evidence are independent. 
 
 | Module | Implementation | Validation | Mode | Evidence | Limitations |
 |---|---|---|---|---|---|
+| Analyst council (base edition) | implemented | integration; see separate local-model sample | demo / local provider | tests/unit/test_council.py, scripts/council_demo.py, scripts/council_llm.py | 3–5 same-model roles; six fixed lenses; keyword routing; advisory only; no statistical quality or device claim |
 | Chief of Staff | implemented | integration | demo | tests/unit/test_workflows.py, tests/unit/test_task_assignments.py | Local tasks and unsent drafts only; individual assignments require explicit user selection |
 | Knowledge | implemented | integration | demo | tests/security/test_knowledge.py, tests/security/test_document_formats.py | Text PDF, DOCX tables, TXT/Markdown; no OCR; bounded parser process is not an OS sandbox; hash demo embeddings do not validate semantic quality |
 | Commercial proposals | implemented | integration | catalog_quote | tests/unit/test_quotes.py, tests/security/test_quote_security.py, tests/security/test_customer_api.py, scripts/customer_demo.py | RUB CSV/XLSX catalogs only; reviewed SKU/quantity suggestions; no outgoing sending; no statistical real-model quote-quality validation |

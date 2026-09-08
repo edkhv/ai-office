@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add the base-edition Analyst council: 3–5 analytical perspectives, fixed skill registry, per-role worker checkpoints, permission-checked evidence, disagreement-preserving synthesis and an EN/RU interface. Demo is clearly labeled; decisions remain with people.
+
 - Use Local AI Station 96–128 GB throughout the product and documentation; select the manufacturer and deployment topology during technical validation.
 
 ## 0.1.0-alpha — 2026-09-05

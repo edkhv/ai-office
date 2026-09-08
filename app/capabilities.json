@@ -1,5 +1,17 @@
 [
   {
+    "module": "Analyst council (base edition)",
+    "implementation": "implemented",
+    "validation": "integration",
+    "mode": "demo / local provider",
+    "test_refs": ["tests/unit/test_council.py", "scripts/council_demo.py", "scripts/council_llm.py"],
+    "limitations": [
+      "3–5 same-model perspectives; six fixed skills and keyword routing; demo is question templates; advisory only",
+      "See separate local-model sample; no statistical council-quality or device validation"
+    ],
+    "checked_at": "2026-09-08T13:15:46+00:00"
+  },
+  {
     "module": "Company pilot and user administration",
     "implementation": "implemented",
     "validation": "integration",
