@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-09-08T13:18:55.795125+00:00",
+  "mode": "deterministic_demo",
+  "browser_errors": [],
+  "external_requests": [],
+  "screenshots": 3,
+  "checks": [
+    "automatic five-role council",
+    "manual three-role council",
+    "persisted history after reload",
+    "demo labels and needs_data",
+    "Russian UI",
+    "mobile overflow"
+  ]
+}

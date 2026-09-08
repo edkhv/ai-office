@@ -1,6 +1,16 @@
 # AI Office implementation status
 
-Updated 2026-09-07 (Europe/Moscow). Version 0.1.0-alpha plus the company pilot increment. This is a runnable software prototype, not a production installation or hardware-validation claim.
+Updated 2026-09-08 (Europe/Moscow). Version 0.1.0-alpha plus the company pilot and analyst council increments. This is a runnable software prototype, not a production installation or hardware-validation claim.
+
+## Analyst council — base edition increment
+
+Implemented: owner/manager council API and EN/RU screen; automatic rule-based routing or manual selection of 3–5 roles; six fixed analytical skills; separate perspectives, synthesis with disagreements, source viewer and explicit human-facing recommendations. The existing SQL worker persists selection, each role and synthesis as separate leased stages with transactional checkpoints and safe audit metadata. Current ACLs apply before generation, before commit and when reading persisted conclusions. Demo/pilot without a model show labeled question templates and NEEDS DATA. Local-model output can be copied into an executive instruction for separate review and approval; the council never authorizes business actions.
+
+Local verification on 2026-09-08: **216 unit/security tests passed**, 3 integration tests deselected, **85%** aggregate coverage; **3 real-Qdrant integration tests passed**; **4 demo evals passed**; Ruff/format/mypy and package build passed. Fourteen council cases cover routing, permissions, idempotency, restart, lease fencing, revocation, schema/citation rejection, no premature business writes, pilot demo honesty and context bounds. Actual browser checks passed automatic/manual councils, persisted history, demo labeling, Russian UI and mobile width with zero browser errors or external requests. The existing live HTTP smoke passed **7/7**. See [browser evidence](docs/validation/council-browser.json), [model evidence](docs/validation/council-llm.json) and [workflow contract](docs/ANALYST_COUNCIL.md).
+
+Local Docker verification used the previously built frozen application/runtime images with updated application files because Docker Hub timed out fetching base-image metadata. No dependency or Dockerfile change was made. A clean build remains covered by the repository CI; local cached-image checks alone do not prove that clean build. No new hardware tests or statistical council-quality evaluation were performed. Industry skills, Company Memory export, event-driven departments, escalation policies and a workforce dashboard are retained as planned increments in ROADMAP.md.
+
+Actual local **qwen3.5:9b** through the isolated CrewAI runtime passed **4/4** council contract checks: Strategy, Finance, Critic and synthesis, using explicitly synthetic source text. All three roles cited the supplied source and listed missing data; the final recommendation was NEEDS DATA. The stages took approximately **106 seconds total** on this development host. This is one contract/abstention sample, not an accuracy benchmark, an end-to-end RAG quality measurement or a target-station performance claim.
 
 ## Implemented
 

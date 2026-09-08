@@ -4,8 +4,16 @@ The completed P0 and customer demonstration increment are described in MVP_SCOPE
 
 ## P1 — small complete increments
 
+The base **Analyst council** now provides a bounded rule-based team router, six analytical skill definitions and durable per-role checkpoints. See [ANALYST_COUNCIL.md](ANALYST_COUNCIL.md). The broader digital workforce architecture below remains planned; the council does not implement autonomous departments.
+
 | Increment | Future input → output contract | Acceptance gate |
 |---|---|---|
+| Company Memory and state export | Authorized tasks, decisions, approvals and evidence → generated COMPANY_STATE.md | Database remains authoritative; permission-scoped export with timestamps and provenance; no model-edited company truth |
+| Industry Skill Registry | Versioned client policies and industry skill packs → validated analytical contracts | Owner-controlled policy changes, examples, tests and rollback; current six fixed council lenses are implemented |
+| Dynamic Team Router extension | Workflow requirements and permitted tools → selected specialist team | Role selection evaluation, scoped tools, budgets and explicit approval for business writes; current council router is keyword-based |
+| Progress and escalation | Repeated unchanged checkpoint or overdue dependency → proposed human escalation | Configurable thresholds, factual blocker evidence, deduplication and visible alternatives; no fabricated work |
+| Event-driven orchestration | Authorized mail, document, price or payment event → bounded workflow | Event IDs, cursor/replay handling, action policies, failure recovery and scheduled heartbeat; current councils run on demand |
+| Digital Workforce Control Center | Stored job/checkpoint events → role activity and measured outcomes | Actual timestamps and measured denominators; no invented agent KPI percentages; current council shows its own stages |
 | Office Manager extension | Authorized mailbox import + existing catalog/quote core → linked request and reviewed reply | Scoped connector, import cursor, source rights and human-approved outgoing messages |
 | OCR / advanced documents | Scanned PDF/image or complex layout → reviewed text and position anchors | Bounded OCR process, confidence/reading-order checks, image evidence and ACL regressions |
 | Meetings | Authorized transcript → minutes, evidence spans, proposed tasks | No task writes before approval, uncertain speakers and missing deadlines marked |

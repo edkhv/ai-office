@@ -1,5 +1,7 @@
 # MVP scope
 
+Base edition addition: **Analyst council** — on-demand review of ideas by 3–5 selected analytical roles, six fixed skills, saved per-role checkpoints, cited synthesis with disagreements and human-facing next steps. Demo outputs are templates; local-model synthesis uses the existing bounded CrewAI runtime. See [ANALYST_COUNCIL.md](ANALYST_COUNCIL.md).
+
 P0 implemented: web/API, local credentials and scoped sessions, SQLite migrations, durable jobs and worker leases, executive instruction → typed proposal → approval → local tasks, job/history polling, status updates, versioned sources, Qdrant ACL retrieval, five Decimal financial metrics with lineage, on-demand briefing, safe audit, demo/Ollama/compatible HTTP providers, bilingual UI and partner materials.
 
 The customer demonstration increment adds three connected capabilities:

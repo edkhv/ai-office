@@ -8,6 +8,7 @@ AI Office is an early-stage, local-first business assistant platform for small a
 
 ## What works
 
+- **Analyst council (base edition):** 3–5 selected perspectives, separate conclusions, disagreements and a human-facing recommendation, with sources and persisted checkpoints. Demo is a labeled question template; substantive analysis requires a local model. [Workflow and limits](docs/ANALYST_COUNCIL.md).
 - **Chief of Staff:** instruction → typed plan → approval of an exact version/hash → real local tasks. Durable jobs survive restarts; repeated approvals do not duplicate local writes.
 - **Knowledge:** text PDF, DOCX (including tables), Markdown and TXT ingestion. Immutable originals and extracted spans; Qdrant retrieval filtered by current permissions; answers link to pages, paragraphs or table rows. Downloads and saved answers recheck access.
 - **Commercial proposals:** import an Excel/CSV catalog, review proposed SKU/quantity pairs, calculate RUB prices, discounts and VAT with Decimal, inspect source rows, and export the same saved calculation as DOCX/PDF. Approval creates one assigned local task.

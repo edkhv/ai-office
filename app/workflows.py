@@ -57,16 +57,20 @@ class Workflows:
         self.quotes = Quotes(engine, settings, knowledge, clock)
 
     def submit(self, actor, payload, key, correlation_id, kind="command"):
-        if kind not in {"command", "answer", "quote_suggestion"}:
+        if kind not in {"command", "answer", "quote_suggestion", "council"}:
             raise DomainError("INVALID_RUN_TYPE", 422)
-        if kind in {"command", "quote_suggestion"}:
+        if kind == "council":
+            from app.council import CouncilRequest
+
+            payload = CouncilRequest.model_validate(payload).model_dump()
+        if kind in {"command", "quote_suggestion", "council"}:
             require(actor, "owner", "manager")
         if not key or len(key) > 100:
             raise DomainError("IDEMPOTENCY_KEY_REQUIRED", 422)
         now = self.clock()
         with transaction(self.engine) as conn:
             actor = live_actor(conn, actor)
-            if kind in {"command", "quote_suggestion"}:
+            if kind in {"command", "quote_suggestion", "council"}:
                 require(actor, "owner", "manager")
             previous = row(
                 conn, select(runs).where(runs.c.actor_id == actor.id, runs.c.idempotency_key == key)
@@ -99,7 +103,11 @@ class Workflows:
                 input_hash=hashed,
             )
             conn.execute(runs.insert().values(**values))
-            enqueue(conn, run_id, "plan:1" if kind == "command" else "answer:1")
+            enqueue(
+                conn,
+                run_id,
+                "council:0" if kind == "council" else "plan:1" if kind == "command" else "answer:1",
+            )
             record(
                 conn,
                 actor,
@@ -107,6 +115,7 @@ class Workflows:
                     "command": "command_received",
                     "answer": "question_received",
                     "quote_suggestion": "quote_suggestion_received",
+                    "council": "council_received",
                 }[kind],
                 run_id,
                 "succeeded",
@@ -118,6 +127,9 @@ class Workflows:
     def get(self, actor, run_id):
         with self.engine.connect() as conn:
             run = authorized_run(conn, actor, run_id)
+            if run["type"] == "council":
+                actor = live_actor(conn, actor)
+                require(actor, "owner", "manager")
             if run["type"] in {"quote", "quote_suggestion"}:
                 self.quotes.validate_run_access(conn, actor, run)
             run["proposal"] = row(
@@ -127,7 +139,11 @@ class Workflows:
                 ),
             )
             run["jobs"] = rows(conn, select(jobs).where(jobs.c.run_id == run_id))
-        if run["type"] == "answer" and run.get("result") and "evidence" in run["result"]:
+        if (
+            run["type"] in {"answer", "council"}
+            and run.get("result")
+            and "evidence" in run["result"]
+        ):
             # Current ACL checks apply to persisted answers too, including old browser links.
             evidence = run["result"]["evidence"]
             if not all(self.knowledge.evidence_allowed(actor, e) for e in evidence):
@@ -325,6 +341,9 @@ class Workflows:
                 return True
             if job["attempts"] > 3:
                 raise DomainError("JOB_RETRY_LIMIT", 503)
+            if run["type"] == "council":
+                self.process_council(job, run, actor)
+                return True
             if run["type"] == "command":
                 require(actor, "owner", "manager")
                 command = Command.model_validate(run["input"])
@@ -425,7 +444,11 @@ class Workflows:
                         runs.update()
                         .where(runs.c.id == run["id"])
                         .values(
-                            state="failed", result={"error_code": code}, updated_at=self.clock()
+                            state="failed",
+                            result={**(run.get("result") or {}), "error_code": code}
+                            if run["type"] == "council"
+                            else {"error_code": code},
+                            updated_at=self.clock(),
                         )
                     )
                     # Preserve revoked actor identity in audit without granting permissions.
@@ -448,6 +471,91 @@ class Workflows:
                         now=self.clock(),
                     )
         return True
+
+    def process_council(self, job, run, actor):
+        from app.council import REGISTRY_VERSION, CouncilRequest, analyze, route, synthesize
+
+        require(actor, "owner", "manager")
+        request = CouncilRequest.model_validate(run["input"])
+        result = run.get("result")
+        stage = int(job["stage"].split(":")[1])
+        if stage == 0:
+            selected, reason = route(request)
+            result = {
+                "roles": selected,
+                "routing": reason,
+                "registry_version": REGISTRY_VERSION,
+                "evidence": self.knowledge.search(actor, request.question)[:5],
+                "perspectives": [],
+                "engine": self.provider.engine,
+                "model_id": self.provider.model_id,
+                "demo": self.provider.engine == "deterministic_demo",
+                "warnings": [
+                    "Advisory only. Same-model roles are not independent experts. / Рекомендации для человека. Роли одной модели не являются независимыми экспертами.",
+                    "Citations identify available excerpts; correctness requires human review. / Ссылки указывают на доступные фрагменты; корректность выводов проверяет человек.",
+                ],
+                "checkpoints": [],
+            }
+            step = "team_selected"
+        else:
+            if not result or stage != len(result["perspectives"]) + 1:
+                raise DomainError("COUNCIL_CHECKPOINT_CONFLICT", 409)
+            if result["registry_version"] != REGISTRY_VERSION:
+                raise DomainError("COUNCIL_REGISTRY_CHANGED", 409)
+            if (result["engine"], result["model_id"]) != (
+                self.provider.engine,
+                self.provider.model_id,
+            ):
+                raise DomainError("COUNCIL_PROVIDER_CHANGED", 409)
+            if not all(self.knowledge.evidence_allowed(actor, e) for e in result["evidence"]):
+                raise DomainError("EVIDENCE_ACCESS_CHANGED", 409)
+            if stage <= len(result["roles"]):
+                role = result["roles"][stage - 1]
+                # Each role sees the same source snapshot, not other roles' answers.
+                result["perspectives"].append(
+                    analyze(self.provider, request.question, role, result["evidence"])
+                )
+                step = role
+            else:
+                result["synthesis"] = synthesize(
+                    self.provider, request.question, result["perspectives"], result["evidence"]
+                )
+                step = "synthesis"
+        with transaction(self.engine) as conn:
+            if not self.lease_valid(conn, job):
+                return
+            current = live_actor(conn, actor)
+            require(current, "owner", "manager")
+            if not all(
+                self.knowledge.evidence_allowed(current, e, conn=conn) for e in result["evidence"]
+            ):
+                raise DomainError("EVIDENCE_ACCESS_CHANGED", 409)
+            result["checkpoints"].append({"step": step, "completed_at": self.clock()})
+            completed = step == "synthesis"
+            conn.execute(
+                runs.update()
+                .where(runs.c.id == run["id"])
+                .values(
+                    state="completed" if completed else "planning",
+                    result=result,
+                    updated_at=self.clock(),
+                )
+            )
+            conn.execute(
+                jobs.update().where(jobs.c.id == job["id"]).values(status="done", lease_token=None)
+            )
+            if not completed:
+                enqueue(conn, run["id"], f"council:{stage + 1}")
+            record(
+                conn,
+                current,
+                "council_checkpoint",
+                run["id"],
+                "succeeded",
+                run["correlation_id"],
+                {"step": step, "engine": self.provider.engine},
+                now=self.clock(),
+            )
 
     def execute(self, job):
         with transaction(self.engine) as conn:

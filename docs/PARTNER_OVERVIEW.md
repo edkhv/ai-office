@@ -13,3 +13,5 @@ We would welcome a discussion about an evaluation unit or possible developer pri
 Future cooperation could include integration services or regional representation after technical and commercial discussion. No current official partnership, certified integration, confirmed discount, procurement volume or revenue is claimed. Any procurement would use mutually agreed official channels and applicable rules. This document is a discussion brief; no message has been sent to the manufacturer by the coding workflow.
 
 Suggested review order: README → live demo / screenshots → ARCHITECTURE → LOCAL_AI_STATION_VALIDATION → VALIDATION and ROADMAP.
+
+The base prototype now also includes an **Analyst council**: 3–5 role perspectives selected automatically or manually, preserved intermediate conclusions, and a cited recommendation with disagreements and next steps. Show the explicitly labeled no-model template or configure the local provider for actual analysis. It is advisory and uses one configured model; it does not establish independent expert consensus. [Council workflow](ANALYST_COUNCIL.md) · [Actual Russian UI](assets/council-ru.png).

@@ -18,7 +18,14 @@ from app.providers import CrewProvider
 
 class Step(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    role: Literal["Planner", "Reviewer", "Evidence analyst", "Quote preparation assistant"]
+    role: Literal[
+        "Planner",
+        "Reviewer",
+        "Evidence analyst",
+        "Quote preparation assistant",
+        "Council analyst",
+        "Council chair",
+    ]
     instruction: str = Field(min_length=1, max_length=60000)
 
 
